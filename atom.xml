@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+    <id>https://encre.eu.org</id>
+    <title>Gridea</title>
+    <updated>2022-07-28T11:51:11.095Z</updated>
+    <generator>https://github.com/jpmonette/feed</generator>
+    <link rel="alternate" href="https://encre.eu.org"/>
+    <link rel="self" href="https://encre.eu.org/atom.xml"/>
+    <subtitle>温故而知新</subtitle>
+    <logo>https://encre.eu.org/images/avatar.png</logo>
+    <icon>https://encre.eu.org/favicon.ico</icon>
+    <rights>All rights reserved 2022, Gridea</rights>
+    <entry>
+        <title type="html"><![CDATA[HALO WORLD]]></title>
+        <id>https://encre.eu.org/post/halo-world/</id>
+        <link href="https://encre.eu.org/post/halo-world/">
+        </link>
+        <updated>2022-07-28T11:45:09.000Z</updated>
+        <content type="html"><![CDATA[<h2 id="这是博客开荒之作">这是博客开荒之作。</h2>
+<h1 id="博客目标">博客目标</h1>
+<p>究天人之际<br>
+通古今之变<br>
+成一家之言</p>
+<h1 id="博客概况">博客概况</h1>
+<p>使用<a href="gridea.dev">Gridea</a>创作。<br>
+使用Markdown语言写作。<br>
+内容与IT无关。<br>
+内容与文学哲学有关。<br>
+没了。</p>
+<h1 id="站长信息">站长信息</h1>
+<p>男<br>
+06年生人<br>
+🇨🇳浙江温州</p>
+]]></content>
+    </entry>
+</feed>
