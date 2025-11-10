@@ -1,0 +1,123 @@
+name: Build README Blog
+
+on:
+  push:
+    paths:
+      - "posts/*.md"      # 只要文章变动就触发
+  workflow_dispatch:       # 也可以手动点按钮跑
+
+jobs:
+  build-readme:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Generate README blog
+        run: |
+          set -e
+
+          # 按修改时间倒序拿到所有文章（新的在前）
+          posts_sorted=$(ls -t posts/*.md)
+
+          ########################
+          # 1. 写 README 头部
+          ########################
+          cat > README.md << 'EOF'
+# 📚 我的 README 博客
+
+> 用 GitHub Actions 自动生成的单页博客。  
+> 最新文章会排在最上面，下面有历史目录和全文档案。
+
+EOF
+
+          echo "" >> README.md
+          echo "## 🆕 最新文章（最近 3 篇）" >> README.md
+          echo "" >> README.md
+
+          ########################
+          # 2. 最新 3 篇：卡片 + 摘要
+          ########################
+          i=0
+          for f in $posts_sorted; do
+            if [ $i -ge 3 ]; then
+              break
+            fi
+
+            filename=$(basename "$f")
+            # 文件名形如：2025-11-10-xxx.md
+            date_part=${filename%%-*}
+
+            # 标题：第一行以 "# " 开头
+            title=$(grep -m 1 '^# ' "$f" | sed 's/^# //')
+
+            # 摘要：从第二行开始找第一行非空的内容
+            snippet=$(tail -n +2 "$f" | grep -m 1 -v '^[[:space:]]*$' | sed 's/^ *//; s/ *$//')
+            # 截断到 80 字符
+            if [ -n "$snippet" ]; then
+              snippet=${snippet:0:80}
+              if [ ${#snippet} -eq 80 ]; then
+                snippet="$snippet..."
+              fi
+            fi
+
+            echo "---" >> README.md
+            echo "" >> README.md
+            echo "### ${date_part} · ${title}" >> README.md
+            echo "" >> README.md
+            if [ -n "$snippet" ]; then
+              echo "$snippet" >> README.md
+              echo "" >> README.md
+            fi
+            echo "[👉 阅读全文]($f)" >> README.md
+            echo "" >> README.md
+
+            i=$((i+1))
+          done
+
+          ########################
+          # 3. 历史文章目录（只列标题+日期+链接）
+          ########################
+          echo "" >> README.md
+          echo "## 🗂 历史文章目录" >> README.md
+          echo "" >> README.md
+
+          for f in $posts_sorted; do
+            filename=$(basename "$f")
+            date_part=${filename%%-*}
+            title=$(grep -m 1 '^# ' "$f" | sed 's/^# //')
+            echo "- [${date_part}] [${title}]($f)" >> README.md
+          done
+
+          ########################
+          # 4. 全文档案区（折叠）
+          ########################
+          echo "" >> README.md
+          echo "## 📖 全文档案（点击展开）" >> README.md
+          echo "" >> README.md
+
+          for f in $posts_sorted; do
+            filename=$(basename "$f")
+            date_part=${filename%%-*}
+            title=$(grep -m 1 '^# ' "$f" | sed 's/^# //')
+
+            echo "<details>" >> README.md
+            echo "<summary><strong>${date_part} · ${title}</strong></summary>" >> README.md
+            echo "" >> README.md
+            echo "" >> README.md
+            cat "$f" >> README.md
+            echo "" >> README.md
+            echo "" >> README.md
+            echo "</details>" >> README.md
+            echo "" >> README.md
+            echo "---" >> README.md
+            echo "" >> README.md
+          done
+
+      - name: Commit & push README
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "chore: auto-build README blog"
+          branch: ${{ github.ref_name }}
+
