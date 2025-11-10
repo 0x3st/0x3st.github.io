@@ -3,8 +3,8 @@ name: Build README Blog
 on:
   push:
     paths:
-      - "posts/*.md"      # 只要文章变动就触发
-  workflow_dispatch:       # 也可以手动点按钮跑
+      - "posts/*.md"
+  workflow_dispatch:
 
 jobs:
   build-readme:
@@ -15,6 +15,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Generate README blog
+        shell: bash
         run: |
           set -e
 
@@ -25,12 +26,12 @@ jobs:
           # 1. 写 README 头部
           ########################
           cat > README.md << 'EOF'
-# 📚 我的 README 博客
+          # 📚 我的 README 博客
 
-> 用 GitHub Actions 自动生成的单页博客。  
-> 最新文章会排在最上面，下面有历史目录和全文档案。
+          用 GitHub Actions 自动生成的单页博客。  
+          最新文章会排在最上面，下面有历史目录和全文档案。
 
-EOF
+          EOF
 
           echo "" >> README.md
           echo "## 🆕 最新文章（最近 3 篇）" >> README.md
@@ -77,7 +78,7 @@ EOF
           done
 
           ########################
-          # 3. 历史文章目录（只列标题+日期+链接）
+          # 3. 历史文章目录
           ########################
           echo "" >> README.md
           echo "## 🗂 历史文章目录" >> README.md
@@ -105,9 +106,7 @@ EOF
             echo "<details>" >> README.md
             echo "<summary><strong>${date_part} · ${title}</strong></summary>" >> README.md
             echo "" >> README.md
-            echo "" >> README.md
             cat "$f" >> README.md
-            echo "" >> README.md
             echo "" >> README.md
             echo "</details>" >> README.md
             echo "" >> README.md
@@ -120,4 +119,3 @@ EOF
         with:
           commit_message: "chore: auto-build README blog"
           branch: ${{ github.ref_name }}
-
