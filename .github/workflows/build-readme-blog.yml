@@ -6,6 +6,9 @@ on:
       - "posts/*.md"
   workflow_dispatch:
 
+permissions:
+  contents: write
+
 jobs:
   build-readme:
     runs-on: ubuntu-latest
