@@ -30,7 +30,7 @@ jobs:
           echo "" >> README.md
 
           # 2. 文章列表：按时间倒序，标题 + 阅读全文链接
-          echo "这些是我的文章……"
+          echo "*这些是我的文章……*"
           for f in $posts_sorted; do
             filename=$(basename "$f")
             date_part=${filename%%-*}
