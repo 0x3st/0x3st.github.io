@@ -4,3 +4,5 @@
 
 以后我只要继续在 posts/ 目录里新增类似的 Markdown 文件，
 推送到 GitHub，Actions 就会帮我更新 README。
+
+来自2025年末的 Hello World
