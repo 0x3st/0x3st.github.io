@@ -1,6 +1,6 @@
 # Site Settings
-title: My Markdown Blog
-description: A simple, elegant blog powered by markdown files and GitHub Pages
+title: 530(0x3st) Blog
+description: A reserved domain for 530. Some diary, journal, collections.
 domain: by530.com
 url: https://by530.com
 
@@ -14,6 +14,12 @@ highlighter: rouge
 # Plugins
 plugins:
   - jekyll-seo-tag
+  - jekyll-feed
+  - jekyll-sitemap
+
+# Feed settings
+feed:
+  path: feed.xml
 
 # Exclude build script files from Jekyll processing
 exclude:
