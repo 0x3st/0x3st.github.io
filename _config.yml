@@ -8,6 +8,7 @@ url: https://by530.com
 markdown: kramdown
 highlighter: rouge
 future: true  # Show posts with future dates
+permalink: /:title.html  # URL format: domain.com/post-title.html
 
 # Disable default theme (we use custom layout)
 # theme: jekyll-theme-minimal
