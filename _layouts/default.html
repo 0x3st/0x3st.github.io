@@ -216,6 +216,120 @@
     .tag-section li {
       margin: 0.3rem 0;
     }
+
+    /* ===== Mobile Responsive Optimizations ===== */
+    
+    /* Tablet and below */
+    @media (max-width: 768px) {
+      body {
+        padding: 1.5rem 1rem;
+      }
+      
+      /* Larger touch targets for links */
+      nav a {
+        padding: 0.4rem 0.6rem;
+        display: inline-block;
+      }
+      
+      .tag-cloud a,
+      .post-tags a {
+        padding: 0.4em 0.7em;
+      }
+    }
+    
+    /* Mobile phones */
+    @media (max-width: 480px) {
+      body {
+        font-size: 15px;
+        padding: 1rem 0.75rem;
+      }
+      
+      /* Navigation: flexbox layout */
+      nav {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 0.3rem 0.5rem;
+      }
+      
+      nav a {
+        margin: 0;
+        padding: 0.5rem 0.6rem;
+      }
+      
+      /* Hide separators on mobile */
+      header nav {
+        line-height: 2;
+      }
+      
+      /* Smaller headings */
+      header h1 {
+        font-size: 1.5rem;
+      }
+      
+      header p {
+        font-size: 0.9rem;
+      }
+      
+      h1 { font-size: 1.5rem; }
+      h2 { font-size: 1.3rem; }
+      h3 { font-size: 1.15rem; }
+      
+      /* Responsive tables */
+      table {
+        display: block;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+      }
+      
+      th, td {
+        padding: 0.4rem;
+        font-size: 0.9rem;
+      }
+      
+      /* Code blocks */
+      pre {
+        padding: 0.75rem;
+        font-size: 0.85rem;
+      }
+      
+      code {
+        font-size: 0.85em;
+      }
+      
+      /* Cusdis comment box */
+      #cusdis_thread iframe {
+        min-height: 350px;
+      }
+      
+      /* Lists */
+      ul, ol {
+        padding-left: 1.25rem;
+      }
+      
+      /* Blockquotes */
+      blockquote {
+        padding-left: 0.75rem;
+        margin-left: 0;
+        margin-right: 0;
+      }
+    }
+    
+    /* Very small screens */
+    @media (max-width: 360px) {
+      body {
+        padding: 0.75rem 0.5rem;
+      }
+      
+      header h1 {
+        font-size: 1.3rem;
+      }
+      
+      nav a {
+        font-size: 0.9rem;
+        padding: 0.4rem 0.5rem;
+      }
+    }
   </style>
 </head>
 <body>
@@ -284,7 +398,7 @@
   
   <footer>
     <p><a href="#">⬆️ Back to Top</a></p>
-    <p>&copy; {{ site.time | date: '%Y' }} {{ site.title }}. All rights reserved.</p>
+    <p>&copy; {{ site.time | date: '%Y' }} {{ site.title }}. All rights reserved. Non-AI content guarantee. Anti 996 Licensed.</p>
   </footer>
 </body>
 </html>
