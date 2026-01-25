@@ -1,6 +1,6 @@
 ---
 layout: default
-title: Home
+title: by530 Home Page
 ---
 
 👋 **Hey there, welcome to my corner of the internet!**
