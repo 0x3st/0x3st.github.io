@@ -1,6 +1,7 @@
 ---
 layout: default
 title: Getting Started with Python
+tags: [python, programming, tutorial]
 ---
 
 # Getting Started with Python
