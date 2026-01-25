@@ -145,6 +145,26 @@
       width: 100% !important;
       min-height: 400px !important;
     }
+    
+    /* Tag cloud */
+    .tag-cloud {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin: 1rem 0;
+    }
+    
+    .tag-cloud a {
+      background-color: var(--code-bg);
+      padding: 0.3em 0.6em;
+      border-radius: 4px;
+      font-size: 0.9rem;
+    }
+    
+    .tag-cloud a:hover {
+      opacity: 0.8;
+      text-decoration: none;
+    }
   </style>
 </head>
 <body>
@@ -160,12 +180,14 @@
   </header>
   
   <main>
+    {{ content }}
+    
     {% if page.tags.size > 0 %}
+    <hr>
     <div class="post-tags">
-      🏷️ {% for tag in page.tags %}<a href="{{ '/tags/#' | append: tag | slugify | relative_url }}">{{ tag }}</a>{% unless forloop.last %}, {% endunless %}{% endfor %}
+      🏷️ {% for tag in page.tags %}<a href="{{ '/tags/?tag=' | append: tag | slugify | relative_url }}">{{ tag }}</a>{% unless forloop.last %}, {% endunless %}{% endfor %}
     </div>
     {% endif %}
-    {{ content }}
     
     {% if page.layout == 'default' and page.tags.size > 0 %}
     <!-- Comments Section (Cusdis - Anonymous) -->

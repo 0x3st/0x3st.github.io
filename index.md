@@ -12,7 +12,7 @@ I'm **Wu Lei**, an undergraduate student in Quantitative Finance at CUHK-Shenzhe
 ## 📂 Latest Articles {#articles}
 
 {% for post in site.posts %}
-- [{{ post.title }}]({{ post.url | relative_url }}) — {{ post.date | date: "%Y-%m-%d" }}{% if post.tags.size > 0 %} · {% for tag in post.tags %}`{{ tag }}`{% unless forloop.last %} {% endunless %}{% endfor %}{% endif %}
+- [{{ post.title }}]({{ post.url | relative_url }}) — {{ post.date | date: "%Y-%m-%d" }}{% if post.tags.size > 0 %} · {% for tag in post.tags %}[`{{ tag }}`]({{ '/tags/?tag=' | append: tag | slugify | relative_url }}){% unless forloop.last %} {% endunless %}{% endfor %}{% endif %}
 {% endfor %}
 
 [🏷️ Browse by Tags]({{ '/tags/' | relative_url }})
