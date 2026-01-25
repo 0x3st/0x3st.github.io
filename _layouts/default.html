@@ -14,7 +14,9 @@
     :root {
       --bg-color: #ffffff;
       --text-color: #24292e;
-      --link-color: #0366d6;
+      --link-color: #586069;
+      --link-hover-color: #24292e;
+      --tag-color: #6a737d;
       --border-color: #e1e4e8;
       --code-bg: #f6f8fa;
     }
@@ -23,7 +25,9 @@
       :root {
         --bg-color: #0d1117;
         --text-color: #c9d1d9;
-        --link-color: #58a6ff;
+        --link-color: #8b949e;
+        --link-hover-color: #c9d1d9;
+        --tag-color: #8b949e;
         --border-color: #30363d;
         --code-bg: #161b22;
       }
@@ -42,8 +46,8 @@
       padding: 2rem 1rem;
     }
     
-    a { color: var(--link-color); text-decoration: none; }
-    a:hover { text-decoration: underline; }
+    a { color: var(--link-color); text-decoration: none; transition: color 0.2s ease; }
+    a:hover { color: var(--link-hover-color); text-decoration: underline; }
     
     header {
       text-align: center;
@@ -126,14 +130,17 @@
     
     .post-tags a {
       background-color: var(--code-bg);
+      color: var(--tag-color);
       padding: 0.2em 0.5em;
       border-radius: 4px;
       margin-right: 0.3em;
+      border: 1px solid var(--border-color);
     }
     
     .post-tags a:hover {
       text-decoration: none;
-      opacity: 0.8;
+      color: var(--link-hover-color);
+      background-color: var(--border-color);
     }
     
     /* Cusdis comment box */
@@ -156,14 +163,22 @@
     
     .tag-cloud a {
       background-color: var(--code-bg);
+      color: var(--tag-color);
       padding: 0.3em 0.6em;
       border-radius: 4px;
       font-size: 0.9rem;
+      border: 1px solid var(--border-color);
+      transition: all 0.2s ease;
     }
     
     .tag-cloud a:hover {
-      opacity: 0.8;
+      color: var(--link-hover-color);
+      background-color: var(--border-color);
       text-decoration: none;
+    }
+    
+    .tag-cloud a.show-all {
+      font-weight: 500;
     }
   </style>
 </head>
@@ -185,7 +200,7 @@
     {% if page.tags.size > 0 %}
     <hr>
     <div class="post-tags">
-      🏷️ {% for tag in page.tags %}<a href="{{ '/tags/?tag=' | append: tag | slugify | relative_url }}">{{ tag }}</a>{% unless forloop.last %}, {% endunless %}{% endfor %}
+      🏷️ {% for tag in page.tags %}<a href="{{ '/tags/' | relative_url }}?tag={{ tag | slugify }}">{{ tag }}</a>{% unless forloop.last %}, {% endunless %}{% endfor %}
     </div>
     {% endif %}
     
