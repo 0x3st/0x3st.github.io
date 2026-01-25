@@ -1,7 +1,7 @@
 ---
 layout: default
 title: My First Blog Post
-tags: [blog, markdown, tutorial]
+tags: [blog, tutorial]
 ---
 
 # My First Blog Post
