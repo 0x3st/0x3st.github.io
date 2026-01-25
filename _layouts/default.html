@@ -118,6 +118,23 @@
     }
     
     th { background-color: var(--code-bg); }
+    
+    .post-tags {
+      margin-bottom: 1.5rem;
+      font-size: 0.9rem;
+    }
+    
+    .post-tags a {
+      background-color: var(--code-bg);
+      padding: 0.2em 0.5em;
+      border-radius: 4px;
+      margin-right: 0.3em;
+    }
+    
+    .post-tags a:hover {
+      text-decoration: none;
+      opacity: 0.8;
+    }
   </style>
 </head>
 <body>
@@ -133,7 +150,26 @@
   </header>
   
   <main>
+    {% if page.tags.size > 0 %}
+    <div class="post-tags">
+      🏷️ {% for tag in page.tags %}<a href="{{ '/tags/#' | append: tag | slugify | relative_url }}">{{ tag }}</a>{% unless forloop.last %}, {% endunless %}{% endfor %}
+    </div>
+    {% endif %}
     {{ content }}
+    
+    {% if page.layout == 'default' and page.tags.size > 0 %}
+    <!-- Comments Section (Cusdis - Anonymous) -->
+    <hr>
+    <h2>💬 Comments</h2>
+    <div id="cusdis_thread"
+      data-host="https://cusdis.com"
+      data-app-id="634480cf-4c93-4972-b888-581850e4634e"
+      data-page-id="{{ page.url }}"
+      data-page-url="{{ page.url | absolute_url }}"
+      data-page-title="{{ page.title }}"
+    ></div>
+    <script async defer src="https://cusdis.com/js/cusdis.es.js"></script>
+    {% endif %}
   </main>
   
   <footer>

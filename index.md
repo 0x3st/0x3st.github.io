@@ -38,9 +38,9 @@ I love building tools that automate boring tasks and using data to uncover insig
 ### 📬 Connect
 
 - GitHub: [@0x3st](https://github.com/0x3st)
-- LinkedIn: [Wu Lei](https://www.linkedin.com/in/%E7%A3%8A-%E5%90%B4-9a6b41353/)
+- LinkedIn: [Wu Lei](https://www.linkedin.com/in/maybe-dr-lei-wu/)
 - Twitter/X: [@0x00LW](https://twitter.com/0x00LW)
-- Email: [findmethroughemail@gmail.com](mailto:findmethroughemail@gmail.com)
+- Email: [findmethroughemail@gmail.com](mailto:530@linux.do)
 
 ---
 
