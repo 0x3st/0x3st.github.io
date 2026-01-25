@@ -2,12 +2,12 @@ Anti-Exploitation Public License (AEPL)
 
 Version 1.0
 
-Copyright (c) 2026 530(0x3st)
+Copyright (c) 2026 530
 
-The Anti-Exploitation Public License (AEPL) is the spiritual successor to the
-Anti 996 License. While its predecessor fought for time, AEPL fights for
-dignity. We believe that code is a product of free will and should not be used
-to optimize the enslavement of humanity.
+The Anti-Exploitation Public License (AEPL) is dedicated solely to advocating
+for the rights and dignity of workers. This License does not involve, endorse,
+or oppose any political, economic, cultural, or other ideological positions
+or disputes. Its sole purpose is to promote fair and humane treatment of labor.
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Work"), to deal in
@@ -15,6 +15,32 @@ the Work without restriction, including without limitation the rights to use,
 copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
 the Work, and to permit persons to whom the Work is furnished to do so,
 subject to the following conditions:
+
+VIRAL APPLICATION
+
+Once any Work incorporates this License, this License shall apply to that Work
+in all its versions, forms, modifications, derivatives, conditions, and states,
+without exception. Furthermore, if any component, module, plugin, library, or
+other dependency of a Work is licensed under AEPL, the entire Work that
+incorporates or utilizes such component must also carry this License and comply
+with all its terms. This License is designed to have strong copyleft and viral
+properties to ensure maximum protection for workers.
+
+AUTO-UPGRADE
+
+Within the same major version number (e.g., 1.0), this License shall
+automatically apply the latest revision as published in the official AEPL
+repository (https://github.com/AEPL-Project/AEPL-1.0). If the License text
+carried within a Work differs from the current text in the official repository
+under the same major version, the official repository version shall prevail and
+be deemed the authoritative and binding version. This ensures that improvements,
+clarifications, and updates to labor protections are immediately effective
+across all AEPL-licensed Works.
+
+However, this auto-upgrade mechanism does NOT apply across major version
+boundaries. For example, a Work licensed under AEPL v1.0 will not automatically
+become subject to AEPL v2.0. Upgrading to a new major version requires explicit
+adoption by the Licensor.
 
 DEFINITIONS
 
@@ -25,13 +51,12 @@ license.
 full-time employees, part-time staff, independent contractors, gig workers,
 interns, and outsourced personnel.
 "Blocklist" refers to the publicly maintained list of exploitative entities
-located at https://github.com/AEPL-Project/APEL-1.0/blob/main/blocklist.json
-and the blocklists of its preceeding and subsequent versions.
+located at https://github.com/AEPL-Project/APEL-1.0/blob/main/blocklist.json.
 
 ANTI-EXPLOITATION CONDITIONS
 
-The above rights are strictly conditional upon the Licensee's adherence to
-the following standards:
+The above rights are strictly conditional upon the Licensee's adherence to the
+following standards:
 
 (a) The Licensee must strictly comply with all applicable labor laws in their
     jurisdiction. In jurisdictions with weak labor protections, the Licensee
@@ -68,7 +93,3 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
-
----
-
-For more information about AEPL, visit: https://github.com/AEPL-Project/APEL-1.0
