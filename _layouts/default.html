@@ -143,9 +143,15 @@
       background-color: var(--border-color);
     }
     
-    /* Cusdis comment box - auto height */
+    /* Cusdis comment box - responsive height */
     #cusdis_thread {
       width: 100%;
+    }
+    
+    #cusdis_thread iframe {
+      width: 100% !important;
+      min-height: 300px;
+      height: auto !important;
     }
     
     /* Tag cloud */
