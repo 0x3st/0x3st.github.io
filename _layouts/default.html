@@ -252,6 +252,17 @@
       data-page-title="{{ page.title }}"
     ></div>
     <script async defer src="https://cusdis.com/js/cusdis.es.js"></script>
+    <script>
+      // Auto-resize Cusdis iframe
+      window.addEventListener('message', function(e) {
+        if (e.data && e.data.from === 'cusdis') {
+          var iframe = document.querySelector('#cusdis_thread iframe');
+          if (iframe && e.data.event === 'resize') {
+            iframe.style.height = e.data.height + 'px';
+          }
+        }
+      });
+    </script>
     {% endif %}
   </main>
   
