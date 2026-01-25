@@ -253,14 +253,30 @@
     ></div>
     <script async defer src="https://cusdis.com/js/cusdis.es.js"></script>
     <script>
-      // Auto-resize Cusdis iframe
-      window.addEventListener('message', function(e) {
-        if (e.data && e.data.from === 'cusdis') {
+      // Auto-resize Cusdis iframe using MutationObserver (from GitHub issue #283)
+      window.addEventListener('load', function() {
+        var checkIframe = setInterval(function() {
           var iframe = document.querySelector('#cusdis_thread iframe');
-          if (iframe && e.data.event === 'resize') {
-            iframe.style.height = e.data.height + 'px';
+          if (iframe && iframe.contentWindow && iframe.contentWindow.document.body) {
+            clearInterval(checkIframe);
+            
+            // Initial resize
+            iframe.style.height = iframe.contentWindow.document.body.scrollHeight + 'px';
+            
+            // Watch for changes
+            var observer = new MutationObserver(function() {
+              iframe.style.height = iframe.contentWindow.document.body.scrollHeight + 'px';
+            });
+            observer.observe(iframe.contentWindow.document.body, { 
+              childList: true, 
+              subtree: true,
+              attributes: true
+            });
           }
-        }
+        }, 500);
+        
+        // Fallback: stop checking after 10 seconds
+        setTimeout(function() { clearInterval(checkIframe); }, 10000);
       });
     </script>
     {% endif %}
