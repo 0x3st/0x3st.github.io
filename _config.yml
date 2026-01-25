@@ -1,0 +1,23 @@
+# Site Settings
+title: My Markdown Blog
+description: A simple, elegant blog powered by markdown files and GitHub Pages
+domain: by530.com
+url: https://by530.com
+
+# Build Settings
+markdown: kramdown
+highlighter: rouge
+
+# Disable default theme (we use custom layout)
+# theme: jekyll-theme-minimal
+
+# Plugins
+plugins:
+  - jekyll-seo-tag
+
+# Exclude build script files from Jekyll processing
+exclude:
+  - build.py
+  - config.json
+  - LICENSE
+  - "*.py"

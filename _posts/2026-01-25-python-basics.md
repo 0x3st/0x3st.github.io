@@ -1,3 +1,8 @@
+---
+layout: default
+title: Getting Started with Python
+---
+
 # Getting Started with Python
 
 Python is a versatile programming language that's great for beginners.

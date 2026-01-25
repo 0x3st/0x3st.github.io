@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{ page.title | default: site.title }}</title>
+  <meta name="description" content="{{ page.description | default: site.description }}">
+  
+  <!-- Simple, clean styling -->
+  <style>
+    :root {
+      --bg-color: #ffffff;
+      --text-color: #24292e;
+      --link-color: #0366d6;
+      --border-color: #e1e4e8;
+      --code-bg: #f6f8fa;
+    }
+    
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg-color: #0d1117;
+        --text-color: #c9d1d9;
+        --link-color: #58a6ff;
+        --border-color: #30363d;
+        --code-bg: #161b22;
+      }
+    }
+    
+    * { box-sizing: border-box; }
+    
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+      font-size: 16px;
+      line-height: 1.6;
+      color: var(--text-color);
+      background-color: var(--bg-color);
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 2rem 1rem;
+    }
+    
+    a { color: var(--link-color); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    
+    header {
+      text-align: center;
+      padding-bottom: 1.5rem;
+      border-bottom: 1px solid var(--border-color);
+      margin-bottom: 2rem;
+    }
+    
+    header h1 { margin: 0 0 0.5rem 0; font-size: 1.8rem; }
+    header p { margin: 0 0 1rem 0; opacity: 0.8; font-style: italic; }
+    
+    nav { font-size: 0.95rem; }
+    nav a { margin: 0 0.5rem; }
+    
+    main { min-height: 60vh; }
+    
+    footer {
+      text-align: center;
+      padding-top: 1.5rem;
+      border-top: 1px solid var(--border-color);
+      margin-top: 2rem;
+      font-size: 0.9rem;
+      opacity: 0.7;
+    }
+    
+    /* Markdown content styling */
+    h1, h2, h3, h4 { margin-top: 1.5em; margin-bottom: 0.5em; }
+    h1 { font-size: 1.8rem; }
+    h2 { font-size: 1.5rem; }
+    h3 { font-size: 1.25rem; }
+    
+    code {
+      background-color: var(--code-bg);
+      padding: 0.2em 0.4em;
+      border-radius: 3px;
+      font-size: 0.9em;
+    }
+    
+    pre {
+      background-color: var(--code-bg);
+      padding: 1rem;
+      border-radius: 6px;
+      overflow-x: auto;
+    }
+    
+    pre code { padding: 0; background: none; }
+    
+    blockquote {
+      border-left: 4px solid var(--border-color);
+      margin: 0;
+      padding-left: 1rem;
+      opacity: 0.8;
+    }
+    
+    hr { border: none; border-top: 1px solid var(--border-color); margin: 2rem 0; }
+    
+    ul, ol { padding-left: 1.5rem; }
+    li { margin: 0.25rem 0; }
+    
+    img { max-width: 100%; height: auto; }
+    
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 1rem 0;
+    }
+    
+    th, td {
+      border: 1px solid var(--border-color);
+      padding: 0.5rem;
+      text-align: left;
+    }
+    
+    th { background-color: var(--code-bg); }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>{{ site.title }}</h1>
+    <p>{{ site.description }}</p>
+    <nav>
+      <a href="{{ '/' | relative_url }}">🏠 Home</a> |
+      <a href="{{ '/#articles' | relative_url }}">📂 Articles</a> |
+      <a href="{{ '/#about' | relative_url }}">ℹ️ About</a>
+    </nav>
+  </header>
+  
+  <main>
+    {{ content }}
+  </main>
+  
+  <footer>
+    <p><a href="#">⬆️ Back to Top</a></p>
+    <p>&copy; {{ site.time | date: '%Y' }} {{ site.title }}. All rights reserved.</p>
+  </footer>
+</body>
+</html>

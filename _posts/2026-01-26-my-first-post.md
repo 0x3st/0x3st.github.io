@@ -1,3 +1,8 @@
+---
+layout: default
+title: My First Blog Post
+---
+
 # My First Blog Post
 
 Welcome to my markdown-only blog! This is an example article.
