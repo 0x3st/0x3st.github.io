@@ -1,22 +1,64 @@
-Dual License
+Anti-Exploitation Public License (AEPL)
 
-This project is licensed under the MIT License AND the Anti-996 License.
-
----
-
-MIT License
+Version 1.0
 
 Copyright (c) 2026 530(0x3st)
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
+The Anti-Exploitation Public License (AEPL) is the spiritual successor to the
+Anti 996 License. While its predecessor fought for time, AEPL fights for
+dignity. We believe that code is a product of free will and should not be used
+to optimize the enslavement of humanity.
 
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Work"), to deal in
+the Work without restriction, including without limitation the rights to use,
+copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
+the Work, and to permit persons to whom the Work is furnished to do so,
+subject to the following conditions:
+
+DEFINITIONS
+
+"Licensor" refers to the original author(s) of the Work.
+"Licensee" refers to any individual or entity exercising rights under this
+license.
+"Worker" refers to any person contributing labor to the Licensee, including
+full-time employees, part-time staff, independent contractors, gig workers,
+interns, and outsourced personnel.
+"Blocklist" refers to the publicly maintained list of exploitative entities
+located at https://github.com/AEPL-Project/APEL-1.0/blob/main/blocklist.json.
+
+ANTI-EXPLOITATION CONDITIONS
+
+The above rights are strictly conditional upon the Licensee's adherence to
+the following standards:
+
+(a) The Licensee must strictly comply with all applicable labor laws in their
+    jurisdiction. In jurisdictions with weak labor protections, the Licensee
+    must adhere to the core conventions of the International Labour
+    Organization (ILO).
+
+(b) The Licensee shall not use the Work to create systems that:
+    (i)   Monitor Workers' non-work activities or private communications;
+    (ii)  Enforce algorithmic management that disregards Workers' physical or
+          mental safety;
+    (iii) Penalize Workers for exercising their "Right to Disconnect" outside
+          of agreed working hours.
+
+(c) If the Licensee uses the Work to develop Artificial Intelligence systems
+    intended to automate tasks currently performed by Workers, the Licensee
+    must provide affected Workers with a transition plan, including retraining
+    or fair severance compensation.
+
+(d) The Licensee guarantees that no part of their direct supply chain involves
+    forced labor or child labor.
+
+BLOCKLIST TERMINATION
+
+If the Licensee (or its parent company, subsidiaries, or majority-owned
+affiliates) is listed on the Blocklist with an "ACTIVE" status, all rights
+granted under this License are automatically and immediately terminated. There
+is no option to purchase a separate commercial license to bypass this
+termination. Violation of human rights cannot be offset by monetary payment.
 
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
@@ -28,43 +70,4 @@ SOFTWARE.
 
 ---
 
-Anti-996 License Version 1.0 530(0x3st)
-
-Copyright (c) 2026
-
-Under the Anti-996 License, the following restrictions apply in addition to
-the MIT License above:
-
-The individual or the legal entity obtaining a copy of this software and
-associated documentation files (the "Software") shall not use the Software
-for the purpose of:
-
-1. Violation of Labor Laws: Using the Software in any organization or project
-   that requires or encourages employees to work in violation of local labor
-   laws regarding working hours, overtime compensation, or rest periods.
-
-2. 996 Working Schedule: Using the Software in any organization that enforces
-   or promotes the "996" working schedule (9am to 9pm, 6 days per week) or any
-   similar exploitative working arrangements.
-
-3. Involuntary Overtime: Using the Software in any organization that requires
-   employees to work involuntary overtime without proper compensation or
-   consent.
-
-4. Human Rights Violations: Using the Software in any way that violates the
-   basic human rights of workers, including but not limited to denying
-   employees their legal right to rest and leisure, forcing employees to work
-   under threat of termination, or manipulating compensation to effectively
-   require unpaid overtime.
-
-By using this Software, you agree to respect the legal working hours in your
-jurisdiction, provide fair compensation for any overtime work, support a
-healthy work-life balance for all workers, and not use this Software to
-facilitate or support exploitative labor practices.
-
-For more information, see:
-https://github.com/996icu/996.ICU
-https://996.icu
-https://www.ilo.org
-
-Workers are not machines. Developers have lives.
+For more information about AEPL, visit: https://github.com/AEPL-Project/APEL-1.0
