@@ -46,7 +46,7 @@ I love building tools that automate boring tasks and using data to uncover insig
 
 Don't miss out on new posts! Subscribe via:
 
-- 📰 **RSS Feed:** [feed.xml]({{ '/feed.xml' | relative_url }}) — Add to your favorite RSS reader
+- 📰 **RSS Feed:** [feed.xml]({{ '/feed.xml' | relative_url }}) — Add to your favorite RSS reader([Follow](https://app.folo.is/share/feeds/238304858090830848) link is suggested)
 - ⭐ **Star this repo:** [0x3st.github.io](https://github.com/0x3st/0x3st.github.io) — Get notified on GitHub
 
 ---
