@@ -7,6 +7,7 @@ url: https://by530.com
 # Build Settings
 markdown: kramdown
 highlighter: rouge
+future: true  # Show posts with future dates
 
 # Disable default theme (we use custom layout)
 # theme: jekyll-theme-minimal
