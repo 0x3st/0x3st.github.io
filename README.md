@@ -37,4 +37,4 @@ A reserved domain for 530. Some diary, journal, collections.
 
 ## 📄 License
 
-MIT License AND Anti-996 License Version 1.0
+Anti-Exploitation Public License (AEPL) Version 1.0
