@@ -1,0 +1,258 @@
+/* 传统、克制的学术网站排版 */
+:root {
+  --academic-blue: #163a63;
+  --academic-text: #191919;
+  --academic-muted: #5b5b5b;
+  --academic-rule: #cfcfcf;
+}
+
+body {
+  color: var(--academic-text);
+  background: #fff;
+  font-family: Georgia, "Noto Serif SC", "Source Han Serif SC", "Songti SC", SimSun, serif;
+  font-size: 17px;
+  line-height: 1.9;
+}
+
+.navbar {
+  background: #fff;
+  border-top: 3px solid var(--academic-blue);
+  border-bottom: 1px solid var(--academic-rule);
+  box-shadow: none;
+}
+
+.navbar-title,
+.navbar-nav {
+  font-family: Georgia, "Noto Serif SC", "Songti SC", SimSun, serif;
+}
+
+.navbar-title {
+  font-weight: 600;
+}
+
+.navbar-logo {
+  width: 2rem;
+  height: 2rem;
+  object-fit: cover;
+  border: 1px solid var(--academic-rule);
+  border-radius: 50%;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+.quarto-title .title {
+  color: #111;
+  font-family: Georgia, "Noto Serif SC", "Source Han Serif SC", "Songti SC", SimSun, serif;
+  font-weight: 600;
+  letter-spacing: 0;
+}
+
+h2 {
+  margin-top: 2.5rem;
+  padding-bottom: 0.25rem;
+  border-bottom: 1px solid var(--academic-rule);
+}
+
+a {
+  color: var(--academic-blue);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.15em;
+}
+
+a:hover {
+  color: #0b2744;
+}
+
+.quarto-title-meta,
+.quarto-title-meta-heading,
+.listing-date,
+.metadata {
+  color: var(--academic-muted);
+  font-family: Georgia, "Noto Serif SC", "Songti SC", SimSun, serif;
+}
+
+blockquote {
+  margin: 1.5rem 0;
+  padding: 0.25rem 0 0.25rem 1.25rem;
+  color: #333;
+  background: transparent;
+  border-left: 2px solid #777;
+  font-style: normal;
+}
+
+#TOC {
+  font-size: 0.9rem;
+  line-height: 1.45;
+}
+
+#TOC .active,
+.sidebar nav[role="doc-toc"] ul > li > a.active,
+.sidebar nav[role="doc-toc"] ul > li > ul > li > a.active {
+  color: var(--academic-blue) !important;
+  border-left-color: var(--academic-blue);
+  font-weight: 600;
+}
+
+.quarto-listing-default .listing-item {
+  border-bottom: 1px solid var(--academic-rule);
+}
+
+footer.footer {
+  color: var(--academic-muted);
+  background: #fff;
+  border-top: 1px solid var(--academic-rule);
+}
+
+.profile {
+  display: flex;
+  align-items: flex-start;
+  gap: 2rem;
+  margin-top: 1.5rem;
+}
+
+.profile-image {
+  flex: 0 0 180px;
+}
+
+.profile-image img {
+  width: 180px;
+  height: 180px;
+  object-fit: cover;
+  border: 1px solid var(--academic-rule);
+  border-radius: 50%;
+}
+
+.profile-caption {
+  display: block;
+  margin-top: 0.55rem;
+  color: var(--academic-muted);
+  font-size: 0.8rem;
+  font-style: italic;
+  line-height: 1.4;
+  text-align: center;
+}
+
+.profile-details {
+  max-width: 42rem;
+}
+
+@media (max-width: 767.98px) {
+  .profile {
+    flex-direction: column;
+    gap: 1rem;
+  }
+}
+
+/* Slightly extend every page to the right while preserving its left edge. */
+@media (min-width: 992px) {
+  #quarto-content main.content {
+    width: calc(100% + 5rem);
+    max-width: calc(100% + 5rem);
+    justify-self: start;
+  }
+}
+
+/* Widen the center column of post listings without changing total width. */
+#listing-listing div.quarto-post .metadata {
+  flex: 0 0 18%;
+}
+
+#listing-listing div.quarto-post .body {
+  flex: 1 1 0;
+  min-width: 0;
+}
+
+#listing-listing div.quarto-post .thumbnail {
+  flex: 0 0 25%;
+}
+
+@media (max-width: 767.98px) {
+  #listing-listing div.quarto-post .metadata,
+  #listing-listing div.quarto-post .body,
+  #listing-listing div.quarto-post .thumbnail {
+    flex-basis: auto;
+  }
+}
+
+/* Paragraph-by-paragraph bilingual reading */
+.immersive-toggle {
+  color: var(--academic-blue);
+  font-family: Georgia, "Noto Serif SC", "Songti SC", SimSun, serif;
+  background: transparent;
+  border: 0;
+  cursor: pointer;
+}
+
+.immersive-translation {
+  display: none;
+  margin: -0.45rem 0 1.35rem;
+  padding-left: 1rem;
+  color: #4b5563;
+  border-left: 2px solid #aab9c8;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 0.94em;
+  line-height: 1.7;
+}
+
+.immersive-translation::before {
+  content: "EN";
+  display: block;
+  margin-bottom: 0.1rem;
+  color: #68798a;
+  font-family: Arial, sans-serif;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+}
+
+body.immersive-bilingual .immersive-translation {
+  display: block;
+}
+
+li > .immersive-translation {
+  margin: 0.4rem 0 1rem;
+}
+
+blockquote .immersive-translation {
+  margin: 0.4rem 0 0.6rem;
+  color: #4b5563;
+}
+
+.article-title-translation {
+  margin: 0.35rem 0 1rem;
+  padding: 0;
+  color: #26384a;
+  border-left: 0;
+  font-size: 1.2rem;
+  font-weight: 600;
+  line-height: 1.45;
+}
+
+.article-title-translation::before {
+  display: none;
+}
+
+.listing-title-translation {
+  margin: 0.1rem 0 0.5rem;
+  padding: 0;
+  color: #26384a;
+  border-left: 0;
+  font-size: 1rem;
+  font-weight: 600;
+  line-height: 1.45;
+}
+
+.listing-title-translation::before {
+  display: none;
+}
+
+.listing-description-translation {
+  margin: 0.45rem 0 0;
+  font-size: 0.88em;
+  line-height: 1.6;
+}
+

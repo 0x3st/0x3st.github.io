@@ -1,0 +1,734 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.10.18">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="dcterms.date" content="2026-08-21">
+
+<title>用吃货能听懂的方式讲DSH的论文 – Lei's Note</title>
+<style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: 1.5em;}
+div.column{flex: auto;}
+@media screen {
+div.columns{gap: min(4vw, 1.5em);}
+div.column{overflow-x: auto;}
+}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+</style>
+
+
+<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../">
+<script src="../../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-64a204ab8560d761af7679ceaba22944.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap-829fa26f51d673a98a9fd19d98fc2a03.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<script>
+document.addEventListener("DOMContentLoaded", async function () {
+  const normalize = (text) => text.replace(/\s+/g, " ").trim();
+
+  async function loadPayload(url) {
+    try {
+      const response = await fetch(url);
+      if (!response.ok) return null;
+      return await response.json();
+    } catch (error) {
+      console.warn("Unable to load bilingual translations.", error);
+      return null;
+    }
+  }
+
+  function translationBlock(text, extraClass) {
+    const translated = document.createElement("div");
+    translated.className = "immersive-translation" + (extraClass ? " " + extraClass : "");
+    translated.lang = "en";
+    translated.textContent = text;
+    return translated;
+  }
+
+  function addToggle() {
+    const collapse = document.getElementById("navbarCollapse");
+    if (!collapse) return;
+
+    let rightNav = collapse.querySelector("ul.navbar-nav.ms-auto");
+    if (!rightNav) {
+      rightNav = document.createElement("ul");
+      rightNav.className = "navbar-nav navbar-nav-scroll ms-auto";
+      collapse.appendChild(rightNav);
+    }
+
+    const item = document.createElement("li");
+    item.className = "nav-item";
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = "nav-link immersive-toggle";
+    button.setAttribute("aria-label", "Toggle paragraph-by-paragraph English translation");
+    item.appendChild(button);
+    rightNav.appendChild(item);
+
+    const storageKey = "leis-note-bilingual";
+    let enabled = localStorage.getItem(storageKey) !== "off";
+
+    function renderState() {
+      document.body.classList.toggle("immersive-bilingual", enabled);
+      button.textContent = enabled ? "Bilingual: On" : "Bilingual: Off";
+      button.setAttribute("aria-pressed", String(enabled));
+    }
+
+    button.addEventListener("click", function () {
+      enabled = !enabled;
+      localStorage.setItem(storageKey, enabled ? "on" : "off");
+      renderState();
+    });
+
+    renderState();
+  }
+
+  async function translateArticle() {
+    const articlePath = /\/posts\/dsh-cordis-foodie\/(?:index\.html)?$/;
+    if (!articlePath.test(window.location.pathname)) return 0;
+
+    const payload = await loadPayload(new URL("translations-en.json", window.location.href));
+    if (!payload) return 0;
+
+    const translations = new Map(
+      payload.items.map((item) => [normalize(item.source), item.translation])
+    );
+    const blocks = document.querySelectorAll(
+      "main.content > p, main.content > ol > li, main.content > blockquote > p"
+    );
+
+    let count = 0;
+    const articleTitle = document.querySelector(".quarto-title h1.title");
+    if (articleTitle && payload.titleTranslation) {
+      articleTitle.insertAdjacentElement(
+        "afterend",
+        translationBlock(payload.titleTranslation, "article-title-translation")
+      );
+      count += 1;
+    }
+
+    blocks.forEach(function (block) {
+      const english = translations.get(normalize(block.textContent));
+      if (!english) return;
+
+      const translated = translationBlock(english, "article-translation");
+      if (block.tagName === "LI") {
+        block.appendChild(translated);
+      } else {
+        block.insertAdjacentElement("afterend", translated);
+      }
+      count += 1;
+    });
+    return count;
+  }
+
+  async function translateListing() {
+    const titleLink = document.querySelector(
+      '.listing-title a[href*="posts/dsh-cordis-foodie/"]'
+    );
+    if (!titleLink) return 0;
+
+    const articleUrl = new URL(titleLink.getAttribute("href"), window.location.href);
+    const payload = await loadPayload(new URL("translations-en.json", articleUrl));
+    if (!payload) return 0;
+
+    let count = 0;
+    const title = titleLink.closest(".listing-title");
+    if (title && payload.titleTranslation) {
+      title.insertAdjacentElement(
+        "afterend",
+        translationBlock(payload.titleTranslation, "listing-title-translation")
+      );
+      count += 1;
+    }
+
+    const description = titleLink.closest(".quarto-post")?.querySelector(".listing-description");
+    if (description && payload.items?.[0]?.translation) {
+      description.insertAdjacentElement(
+        "afterend",
+        translationBlock(payload.items[0].translation, "listing-description-translation")
+      );
+      count += 1;
+    }
+    return count;
+  }
+
+  const translatedCount = (await translateArticle()) || (await translateListing());
+  if (translatedCount) addToggle();
+});
+</script>
+
+
+<link rel="stylesheet" href="../../styles.css">
+</head>
+
+<body class="nav-fixed quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a href="../../index.html" class="navbar-brand navbar-brand-logo">
+    <img src="../../images/avatar.jpg" alt="" class="navbar-logo light-content">
+    <img src="../../images/avatar.jpg" alt="" class="navbar-logo dark-content">
+    </a>
+    <a class="navbar-brand" href="../../index.html">
+    <span class="navbar-title">Lei's Note</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../index.html"> 
+<span class="menu-text">Posts</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../about.html"> 
+<span class="menu-text">About</span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
+        
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">用吃货能听懂的方式讲DSH的论文</h1>
+  <div class="quarto-categories">
+    <div class="quarto-category">paper</div>
+    <div class="quarto-category">deepseek harness</div>
+  </div>
+  </div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+    <div>
+    <div class="quarto-title-meta-heading">Published</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">August 21, 2026</p>
+    </div>
+  </div>
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<p>七夕节没事干，于是把cordis的那个论文找出来大致看了一眼，忽然就明白为啥dsh这么强调plugin了，也大概能猜到dsh接下来要做啥了。</p>
+<p><img src="cover.jpeg" class="img-fluid" alt="DeepSeek 论文 A Programming Paradigm for Spatiotemporal Composability"></p>
+<hr>
+<p>七夕节L带着H来到了530餐厅。这个餐厅以严格的规则闻名，如果一道菜做错了，餐厅会开除所有的厨师，把所有菜都倒掉，重新根据菜谱进行采购，预处理，加工的流程。或许是七夕节实在太忙了，一个厨师放错了菜谱，所有顾客立即被老板赶了出去，厨师也全部解雇，一个浪漫的夜晚就这么没了。</p>
+<p>L因为没吃到期待的菜而难过，于是L想，有没有一种办法，在保持高要求的情况下，每次菜品出错只撤走一个厨师，撤掉一道菜，而不影响其他厨师，让餐馆继续运营呢？</p>
+<p>在理想状态下，哪个厨师离场，就只要撤掉他做的那些菜就好，其他的菜没有问题，可以不用动，同时，餐厅的营业可以继续。因为这个厨师走了，并不会影响其他厨师做菜，甚至可以在很短的时间内招聘一个更厉害的新厨师填补空缺。</p>
+<p>可是问题来了。首先，餐厅很乱，我们不知道这个厨师先后到底做了什么，他具体动了哪些东西，做了几道菜，我们不知道（<strong>时间可组合性</strong>，动作与副作用）；其次，这个厨房很大，配菜很多，我们不知道哪些配菜是这个被赶走的厨师单独需要的，还是别的厨师同样需要的。要是他和做宫保鸡丁的厨师都需要用到花生米，如果我们把他用的花生米一起丢掉了，那宫保鸡丁厨师就只能做没有花生米的宫保鸡丁了（<strong>空间可组合性</strong>，依赖与需求）。</p>
+<p>为了解决第一个问题，我们作出以下两条规定：</p>
+<ol type="1">
+<li>每次厨师做一个动作，就在一个便签纸上写这个动作相反的动作。比如说这个厨师把酱料从一号柜台放到了三号柜台，那么就在便签纸上写下“把酱料从三号柜台放到一号柜台”</li>
+<li>新的便签纸贴在旧的便签纸上（<strong>Accumulator</strong>）。如果这个厨师被赶走了，那就按撕便签纸的顺序，从上往下做便签纸上面写的事情。（<strong>LIFO</strong>，后进先出）</li>
+</ol>
+<p>那么我们就可以大概想象以下场景：</p>
+<blockquote class="blockquote">
+<p>厨师A把酱料从1柜台拿到了2柜台，在便签纸上写下“从2柜台拿到1柜台”。然后，A又把酱料从2柜台拿到3柜台，在便签纸上写下“从3柜台拿到2柜台”，贴在上一个便签纸的上面。现在如果去看那一叠便签纸，那么第二张会在第一张的上面。于是，当A被赶走之后，我们先执行第二张“从3柜台拿到2柜台”，此时酱料从3到2，然后执行第一张“从2柜台拿到1柜台”，此时酱料回到了1柜台。A厨师就像没有来过一样，酱料回到了A厨师操作之前的位置。</p>
+</blockquote>
+<p>为了解决第二个问题，我们又有以下两条规定：</p>
+<ol type="1">
+<li>厨师只有在菜品齐全的情况下做菜（<strong>Activating</strong>）。比如说，宫保鸡丁厨师发现，他要的花生米没有了，于是在他拿到花生米之前，绝对不会做宫保鸡丁。同样的，如果他在处理鸡肉时，发现上面有绿绿的东西，也不可以骗顾客说这是蒜汁，而是立刻停下（<strong>Deactivating</strong>），把锅洗干净，等待新鲜的鸡肉到了之后再重新开始做这道菜。</li>
+<li>不同的厨师之间独立工作区域（<strong>Isolation</strong>）。虽然A厨师和B厨师共用一个禽类配菜区，但是一旦A和B拿完肉后，他们俩之间的鸡肉就不能共用了。比如说A要做烤鸭腿，而B要做烤鹅腿，B不可以自己把鹅腿吃了，然后拿A的鸭腿做烤鹅腿。</li>
+</ol>
+<p>除此之外，为了提高效率，厨师不需要自己去拿配菜，只需要在看板上明确指出自己需要什么就好了（<strong>Specification &amp; Notification</strong>），会有配菜员帮忙拿。</p>
+<p>有了上面这四条规定以后，这个餐馆似乎就拟人了起来，至少不会仅仅因为一道菜错了而解散整个餐馆。</p>
+<p>但是，问题还是没有解决完。比如说，配菜区有一锅高汤，A和B都需要，但是A比B做的更快，A会觉得高汤已经用完了，可以直接倒掉。又或者，当菜做到一半时，顾客退单了（现实生活中不可以哦），厨师只知道要做一道菜，不知道当顾客退单时该如何反应，即使被告知退单了，还是硬着头皮做完。那么为了解决以上几个问题，我们又增加了几个规定： 1. 在清除原料之前需要确保没人需要了（<strong>Withdrawal 守卫</strong>）。也就是说，如果A和B都需要高汤，A需要等B也用完高汤之后再倒掉，不能过河拆桥。 2. 炒菜按步骤来，并且随时叫停（<strong>Iteration &amp; Divert</strong>）。比如说，真的有客人非要退菜不可，厨师听到通知后就立刻停下，不需要把菜做完，直接洗锅准备下一道菜。 3. 如果一道菜炒糊了（<strong>Failure</strong>），马上停止，自觉离开，但不要影响其他厨师正常出餐。 4. 无论后厨多么鸡飞狗跳，今天结束时的餐厅，要和平平安安的一天结束后的餐厅一模一样。（<strong>Confluence</strong>）</p>
+<p>那么这样子做，除了做错菜不需要直接解散餐厅外，还有什么好处呢？是有的。</p>
+<p>比如说某一天，老板在一天的营业时间中招了一个新的厨师C，这个厨师C需要和A共用鸭腿，需要和B共用生菜。如果按照原来的思路，那么这个餐厅又需要立刻解散，至少配菜区需要重新分配菜品，这个新厨师必须得等下一餐再一次进行配菜的时候，才能开始做新菜，餐厅的菜单也需要重新做。但如果按照新的规定，这个新厨师不需要等到下一餐，可以直接开始做菜，配菜员可以直接根据库存把他需要的配菜直接拿给他，库存没有的，就立刻到菜市场买；菜单也不用重新做，只要在原有列表里加一个新菜就好了。</p>
+<p>可以发现，L做的这些规定，把一个很抽象的餐厅，变成了我们目前相对更熟悉、更拟人的餐厅。</p>
+<hr>
+<p>以上就是对论文里面出现的一些名词的形象解释，以及它们之间大致的联系。对于ds的cordis运行时而言，可以理解为，新增plugin不需要重新构建，也不会连累其他plugin。比起openclaw有时候装个skill都能给自己搞死，这种新的范式可以防止整个运行时不会因为某个插件出错，或者新增或删除某个插件而需要重新构建。也就是说，这个88页的论文（数字挺吉利），主要是为了plugin而写，那重点必然就是掌控这些plugin的小妙招了。</p>
+<p>其实后面大部分内容都是在证明一些很刁钻但是的确会碰到的一些问题。比如说，A的LIFO可能会和B的LIFO顺序冲突，A回滚之后，很可能会影响B的环境。比如说，B在酱料在2柜台时用了酱料，可是A回滚后酱料只在1柜台呆着，此时就会与B冲突。那么论文中通过证明，只要各组件在操作上满足独立性，对A的操作就会穿透对其他组件的操作，在任意排序下只对A发生改变。比方说，虽然都用酱料，但是A用甜辣酱，B用番茄酱。</p>
+<p>还有一个问题就很有意思，还是高汤的例子。如果高汤师傅A对B说，我等你用完高汤再把锅倒干净洗掉。万一B也在等配菜员C洗完锅，配菜员C又在等高汤师傅A空出灶台，那么这三个人就绑定锁死了，谁也不能离开。此时cordis就用两阶段打烊的策略和无环拓扑的结构来解决这个问题。首先，一旦A准备下班，那么A就会先挂一个“马上下班”的牌子，然后写上现在在用的人，并拒绝新的菜品用这个，等到上面有名字的人都用完了，再把高汤倒掉。其次，食材依赖链条不能有环，也就是说，做鲍鱼先有高汤，那做高汤就不能要求先有鲍鱼。</p>
+<p>最后，关于梁子的目的。虽然说在论文很前面的motivation部分用VSC来阐述动机，并且我觉得他提到的VSC的问题并不会困扰用户，但是最后的落脚点是在一个关键词，也就是“self-evolving”上面。也就是说，deepseek harness与其说是给人的一个工具，不妨说是给AI厨师们和老板们规定了一些可以让它们自行发展的规则，他们可以随时并且自行给餐厅新增员工（plugin），作出新的菜品，而不会影响餐厅的正常运营。</p>
+<p>DSH目前只有Web端，我猜测或许以后真的人类只需要看着一个看板，把需要的菜写上去，而不用自己去一点一点指导AI应该做什么。</p>
+
+
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp("https:\/\/wulei\.org");
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>
