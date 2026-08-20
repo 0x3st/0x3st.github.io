@@ -1,0 +1,135 @@
+<script>
+document.addEventListener("DOMContentLoaded", async function () {
+  const normalize = (text) => text.replace(/\s+/g, " ").trim();
+
+  async function loadPayload(url) {
+    try {
+      const response = await fetch(url);
+      if (!response.ok) return null;
+      return await response.json();
+    } catch (error) {
+      console.warn("Unable to load bilingual translations.", error);
+      return null;
+    }
+  }
+
+  function translationBlock(text, extraClass) {
+    const translated = document.createElement("div");
+    translated.className = "immersive-translation" + (extraClass ? " " + extraClass : "");
+    translated.lang = "en";
+    translated.textContent = text;
+    return translated;
+  }
+
+  function addToggle() {
+    const collapse = document.getElementById("navbarCollapse");
+    if (!collapse) return;
+
+    let rightNav = collapse.querySelector("ul.navbar-nav.ms-auto");
+    if (!rightNav) {
+      rightNav = document.createElement("ul");
+      rightNav.className = "navbar-nav navbar-nav-scroll ms-auto";
+      collapse.appendChild(rightNav);
+    }
+
+    const item = document.createElement("li");
+    item.className = "nav-item";
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = "nav-link immersive-toggle";
+    button.setAttribute("aria-label", "Toggle paragraph-by-paragraph English translation");
+    item.appendChild(button);
+    rightNav.appendChild(item);
+
+    const storageKey = "leis-note-bilingual";
+    let enabled = localStorage.getItem(storageKey) !== "off";
+
+    function renderState() {
+      document.body.classList.toggle("immersive-bilingual", enabled);
+      button.textContent = enabled ? "Bilingual: On" : "Bilingual: Off";
+      button.setAttribute("aria-pressed", String(enabled));
+    }
+
+    button.addEventListener("click", function () {
+      enabled = !enabled;
+      localStorage.setItem(storageKey, enabled ? "on" : "off");
+      renderState();
+    });
+
+    renderState();
+  }
+
+  async function translateArticle() {
+    const articlePath = /\/posts\/dsh-cordis-foodie\/(?:index\.html)?$/;
+    if (!articlePath.test(window.location.pathname)) return 0;
+
+    const payload = await loadPayload(new URL("translations-en.json", window.location.href));
+    if (!payload) return 0;
+
+    const translations = new Map(
+      payload.items.map((item) => [normalize(item.source), item.translation])
+    );
+    const blocks = document.querySelectorAll(
+      "main.content > p, main.content > ol > li, main.content > blockquote > p"
+    );
+
+    let count = 0;
+    const articleTitle = document.querySelector(".quarto-title h1.title");
+    if (articleTitle && payload.titleTranslation) {
+      articleTitle.insertAdjacentElement(
+        "afterend",
+        translationBlock(payload.titleTranslation, "article-title-translation")
+      );
+      count += 1;
+    }
+
+    blocks.forEach(function (block) {
+      const english = translations.get(normalize(block.textContent));
+      if (!english) return;
+
+      const translated = translationBlock(english, "article-translation");
+      if (block.tagName === "LI") {
+        block.appendChild(translated);
+      } else {
+        block.insertAdjacentElement("afterend", translated);
+      }
+      count += 1;
+    });
+    return count;
+  }
+
+  async function translateListing() {
+    const titleLink = document.querySelector(
+      '.listing-title a[href*="posts/dsh-cordis-foodie/"]'
+    );
+    if (!titleLink) return 0;
+
+    const articleUrl = new URL(titleLink.getAttribute("href"), window.location.href);
+    const payload = await loadPayload(new URL("translations-en.json", articleUrl));
+    if (!payload) return 0;
+
+    let count = 0;
+    const title = titleLink.closest(".listing-title");
+    if (title && payload.titleTranslation) {
+      title.insertAdjacentElement(
+        "afterend",
+        translationBlock(payload.titleTranslation, "listing-title-translation")
+      );
+      count += 1;
+    }
+
+    const description = titleLink.closest(".quarto-post")?.querySelector(".listing-description");
+    if (description && payload.items?.[0]?.translation) {
+      description.insertAdjacentElement(
+        "afterend",
+        translationBlock(payload.items[0].translation, "listing-description-translation")
+      );
+      count += 1;
+    }
+    return count;
+  }
+
+  const translatedCount = (await translateArticle()) || (await translateListing());
+  if (translatedCount) addToggle();
+});
+</script>

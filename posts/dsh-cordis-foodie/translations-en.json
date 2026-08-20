@@ -1,0 +1,104 @@
+{
+  "language": "en",
+  "label": "AI-assisted English translation",
+  "titleSource": "用吃货能听懂的方式讲DSH的论文",
+  "titleTranslation": "Explaining the DSH Paper in Terms a Foodie Can Understand",
+  "items": [
+    {
+      "source": "七夕节没事干，于是把cordis的那个论文找出来大致看了一眼，忽然就明白为啥dsh这么强调plugin了，也大概能猜到dsh接下来要做啥了。",
+      "translation": "I had nothing to do on Qixi Festival, so I dug up that Cordis paper and skimmed it. Suddenly, I understood why DSH places so much emphasis on plugins, and I could roughly guess what DSH plans to do next."
+    },
+    {
+      "source": "七夕节L带着H来到了530餐厅。这个餐厅以严格的规则闻名，如果一道菜做错了，餐厅会开除所有的厨师，把所有菜都倒掉，重新根据菜谱进行采购，预处理，加工的流程。或许是七夕节实在太忙了，一个厨师放错了菜谱，所有顾客立即被老板赶了出去，厨师也全部解雇，一个浪漫的夜晚就这么没了。",
+      "translation": "On Qixi Festival, L took H to Restaurant 530. The restaurant was known for its strict rules: if a single dish was made incorrectly, it would fire every chef, throw away every dish, and restart the entire process—purchasing, preparation, and cooking—according to the recipes. Perhaps Qixi night was simply too busy. One chef used the wrong recipe, so the owner immediately drove out all the customers and fired every chef. Just like that, a romantic evening was ruined."
+    },
+    {
+      "source": "L因为没吃到期待的菜而难过，于是L想，有没有一种办法，在保持高要求的情况下，每次菜品出错只撤走一个厨师，撤掉一道菜，而不影响其他厨师，让餐馆继续运营呢？",
+      "translation": "L was upset about not getting the dish they had been looking forward to. So L wondered: is there a way to maintain high standards while removing only one chef and one dish whenever something goes wrong, without affecting the other chefs or stopping the restaurant from operating?"
+    },
+    {
+      "source": "在理想状态下，哪个厨师离场，就只要撤掉他做的那些菜就好，其他的菜没有问题，可以不用动，同时，餐厅的营业可以继续。因为这个厨师走了，并不会影响其他厨师做菜，甚至可以在很短的时间内招聘一个更厉害的新厨师填补空缺。",
+      "translation": "Ideally, when a chef leaves, the restaurant should remove only the dishes that chef made. The other dishes are fine and can remain, while the restaurant continues operating. The chef's departure should not affect the other chefs, and the restaurant could even hire a better replacement within a very short time."
+    },
+    {
+      "source": "可是问题来了。首先，餐厅很乱，我们不知道这个厨师先后到底做了什么，他具体动了哪些东西，做了几道菜，我们不知道（时间可组合性，动作与副作用）；其次，这个厨房很大，配菜很多，我们不知道哪些配菜是这个被赶走的厨师单独需要的，还是别的厨师同样需要的。要是他和做宫保鸡丁的厨师都需要用到花生米，如果我们把他用的花生米一起丢掉了，那宫保鸡丁厨师就只能做没有花生米的宫保鸡丁了（空间可组合性，依赖与需求）。",
+      "translation": "But then problems arise. First, the restaurant is chaotic. We do not know exactly what the chef did, what they touched, or how many dishes they made (temporal composability: actions and side effects). Second, the kitchen is large and contains many ingredients. We do not know which ingredients were needed only by the dismissed chef and which were also needed by others. Suppose both that chef and the chef making kung pao chicken need peanuts. If we throw away all the peanuts the dismissed chef used, the other chef will be left making kung pao chicken without peanuts (spatial composability: dependencies and requirements)."
+    },
+    {
+      "source": "为了解决第一个问题，我们作出以下两条规定：",
+      "translation": "To solve the first problem, we establish two rules:"
+    },
+    {
+      "source": "每次厨师做一个动作，就在一个便签纸上写这个动作相反的动作。比如说这个厨师把酱料从一号柜台放到了三号柜台，那么就在便签纸上写下“把酱料从三号柜台放到一号柜台”",
+      "translation": "Whenever a chef performs an action, they write its inverse action on a sticky note. For example, if the chef moves a sauce from counter one to counter three, the note says, ‘Move the sauce from counter three back to counter one.’"
+    },
+    {
+      "source": "新的便签纸贴在旧的便签纸上（Accumulator）。如果这个厨师被赶走了，那就按撕便签纸的顺序，从上往下做便签纸上面写的事情。（LIFO，后进先出）",
+      "translation": "Each new sticky note is placed on top of the previous one (Accumulator). If the chef is dismissed, the notes are removed from top to bottom and their instructions are carried out in that order (LIFO: last in, first out)."
+    },
+    {
+      "source": "那么我们就可以大概想象以下场景：",
+      "translation": "We can roughly imagine the following scenario:"
+    },
+    {
+      "source": "厨师A把酱料从1柜台拿到了2柜台，在便签纸上写下“从2柜台拿到1柜台”。然后，A又把酱料从2柜台拿到3柜台，在便签纸上写下“从3柜台拿到2柜台”，贴在上一个便签纸的上面。现在如果去看那一叠便签纸，那么第二张会在第一张的上面。于是，当A被赶走之后，我们先执行第二张“从3柜台拿到2柜台”，此时酱料从3到2，然后执行第一张“从2柜台拿到1柜台”，此时酱料回到了1柜台。A厨师就像没有来过一样，酱料回到了A厨师操作之前的位置。",
+      "translation": "Chef A moves the sauce from counter 1 to counter 2 and writes, ‘Move it from counter 2 back to counter 1.’ Then A moves it from counter 2 to counter 3 and writes, ‘Move it from counter 3 back to counter 2,’ placing the new note on top of the previous one. If A is dismissed, we first execute the second note, moving the sauce from 3 back to 2, and then the first note, moving it from 2 back to 1. It is as if Chef A had never been there: the sauce returns to where it was before A touched it."
+    },
+    {
+      "source": "为了解决第二个问题，我们又有以下两条规定：",
+      "translation": "To solve the second problem, we add another two rules:"
+    },
+    {
+      "source": "厨师只有在菜品齐全的情况下做菜（Activating）。比如说，宫保鸡丁厨师发现，他要的花生米没有了，于是在他拿到花生米之前，绝对不会做宫保鸡丁。同样的，如果他在处理鸡肉时，发现上面有绿绿的东西，也不可以骗顾客说这是蒜汁，而是立刻停下（Deactivating），把锅洗干净，等待新鲜的鸡肉到了之后再重新开始做这道菜。",
+      "translation": "A chef cooks only when all required ingredients are available (Activating). For example, if the chef making kung pao chicken discovers that there are no peanuts, they do not start cooking until peanuts arrive. Likewise, if they find something green on the chicken, they cannot tell the customer it is garlic sauce. They must stop immediately (Deactivating), clean the wok, and wait for fresh chicken before restarting the dish."
+    },
+    {
+      "source": "不同的厨师之间独立工作区域（Isolation）。虽然A厨师和B厨师共用一个禽类配菜区，但是一旦A和B拿完肉后，他们俩之间的鸡肉就不能共用了。比如说A要做烤鸭腿，而B要做烤鹅腿，B不可以自己把鹅腿吃了，然后拿A的鸭腿做烤鹅腿。",
+      "translation": "Different chefs have isolated work areas (Isolation). Although Chefs A and B share a poultry preparation area, once they take their meat, their portions can no longer be shared. If A is making roast duck leg and B is making roast goose leg, B cannot eat the goose leg and then use A's duck leg to make roast goose leg."
+    },
+    {
+      "source": "除此之外，为了提高效率，厨师不需要自己去拿配菜，只需要在看板上明确指出自己需要什么就好了（Specification & Notification），会有配菜员帮忙拿。",
+      "translation": "For efficiency, chefs do not need to fetch ingredients themselves. They only need to specify what they require on the board (Specification & Notification), and a prep worker will bring it to them."
+    },
+    {
+      "source": "有了上面这四条规定以后，这个餐馆似乎就拟人了起来，至少不会仅仅因为一道菜错了而解散整个餐馆。",
+      "translation": "With these four rules, the restaurant begins to feel more like a real, human organization. At the very least, one incorrect dish no longer causes the entire restaurant to dissolve."
+    },
+    {
+      "source": "但是，问题还是没有解决完。比如说，配菜区有一锅高汤，A和B都需要，但是A比B做的更快，A会觉得高汤已经用完了，可以直接倒掉。又或者，当菜做到一半时，顾客退单了（现实生活中不可以哦），厨师只知道要做一道菜，不知道当顾客退单时该如何反应，即使被告知退单了，还是硬着头皮做完。那么为了解决以上几个问题，我们又增加了几个规定： 1. 在清除原料之前需要确保没人需要了（Withdrawal 守卫）。也就是说，如果A和B都需要高汤，A需要等B也用完高汤之后再倒掉，不能过河拆桥。 2. 炒菜按步骤来，并且随时叫停（Iteration & Divert）。比如说，真的有客人非要退菜不可，厨师听到通知后就立刻停下，不需要把菜做完，直接洗锅准备下一道菜。 3. 如果一道菜炒糊了（Failure），马上停止，自觉离开，但不要影响其他厨师正常出餐。 4. 无论后厨多么鸡飞狗跳，今天结束时的餐厅，要和平平安安的一天结束后的餐厅一模一样。（Confluence）",
+      "translation": "The problem is still not fully solved. Suppose the preparation area has a pot of stock needed by both A and B. A works faster than B and may decide that the stock is no longer needed and pour it away. Or suppose a customer cancels an order halfway through cooking (please do not do this in real life). The chef knows only that a dish must be made, not how to react to a cancellation; even after being notified, the chef may stubbornly finish it. We therefore add several more rules: 1. Before removing an ingredient, make sure nobody still needs it (Withdrawal guard). If both A and B need the stock, A must wait until B is finished before pouring it away. 2. Cooking proceeds step by step and can be stopped at any time (Iteration & Divert). If a customer insists on cancelling, the chef stops as soon as the notice arrives, cleans the wok, and prepares for the next dish instead of finishing the cancelled one. 3. If a dish is burned (Failure), stop immediately and leave voluntarily, without disrupting the other chefs' service. 4. No matter how chaotic the kitchen becomes, the restaurant at closing time must be identical to a restaurant that completed an entirely uneventful day (Confluence)."
+    },
+    {
+      "source": "那么这样子做，除了做错菜不需要直接解散餐厅外，还有什么好处呢？是有的。",
+      "translation": "Besides avoiding the need to dissolve the restaurant whenever a dish goes wrong, does this approach provide any other benefits? It does."
+    },
+    {
+      "source": "比如说某一天，老板在一天的营业时间中招了一个新的厨师C，这个厨师C需要和A共用鸭腿，需要和B共用生菜。如果按照原来的思路，那么这个餐厅又需要立刻解散，至少配菜区需要重新分配菜品，这个新厨师必须得等下一餐再一次进行配菜的时候，才能开始做新菜，餐厅的菜单也需要重新做。但如果按照新的规定，这个新厨师不需要等到下一餐，可以直接开始做菜，配菜员可以直接根据库存把他需要的配菜直接拿给他，库存没有的，就立刻到菜市场买；菜单也不用重新做，只要在原有列表里加一个新菜就好了。",
+      "translation": "Suppose that during service one day, the owner hires a new chef, C. C needs to share duck legs with A and lettuce with B. Under the old approach, the restaurant might have to dissolve immediately. At a minimum, the preparation area would need to redistribute its ingredients; the new chef would have to wait until the next meal's allocation before starting, and the menu would need to be rebuilt. Under the new rules, C can begin cooking immediately. The prep worker supplies what C needs from inventory and buys anything that is missing. The menu does not need to be rebuilt either; a new dish can simply be added to the existing list."
+    },
+    {
+      "source": "可以发现，L做的这些规定，把一个很抽象的餐厅，变成了我们目前相对更熟悉、更拟人的餐厅。",
+      "translation": "We can see that L's rules turn an abstract restaurant into one that is more familiar to us and behaves more like a human organization."
+    },
+    {
+      "source": "以上就是对论文里面出现的一些名词的形象解释，以及它们之间大致的联系。对于ds的cordis运行时而言，可以理解为，新增plugin不需要重新构建，也不会连累其他plugin。比起openclaw有时候装个skill都能给自己搞死，这种新的范式可以防止整个运行时不会因为某个插件出错，或者新增或删除某个插件而需要重新构建。也就是说，这个88页的论文（数字挺吉利），主要是为了plugin而写，那重点必然就是掌控这些plugin的小妙招了。",
+      "translation": "The above is an intuitive explanation of several terms in the paper and their general relationships. For the Cordis runtime in DS, adding a plugin does not require a rebuild and does not drag other plugins down with it. Compared with OpenClaw, where merely installing a skill can sometimes break the whole system, this new paradigm prevents the entire runtime from requiring a rebuild whenever a plugin fails or a plugin is added or removed. In other words, this 88-page paper—an auspicious number—is largely written for plugins, so its focus is naturally on the techniques needed to keep them under control."
+    },
+    {
+      "source": "其实后面大部分内容都是在证明一些很刁钻但是的确会碰到的一些问题。比如说，A的LIFO可能会和B的LIFO顺序冲突，A回滚之后，很可能会影响B的环境。比如说，B在酱料在2柜台时用了酱料，可是A回滚后酱料只在1柜台呆着，此时就会与B冲突。那么论文中通过证明，只要各组件在操作上满足独立性，对A的操作就会穿透对其他组件的操作，在任意排序下只对A发生改变。比方说，虽然都用酱料，但是A用甜辣酱，B用番茄酱。",
+      "translation": "Much of the rest of the paper proves properties for situations that seem contrived but can genuinely occur. For example, A's LIFO order may conflict with B's LIFO order, and rolling back A may affect B's environment. Suppose B used the sauce while it was on counter 2, but after A rolls back, the sauce exists only on counter 1; this creates a conflict with B. The paper proves that as long as components are operationally independent, A's operations can commute through the operations of other components. Under any ordering, only A is changed. As an analogy, although both use ‘sauce,’ A uses sweet chili sauce while B uses ketchup."
+    },
+    {
+      "source": "还有一个问题就很有意思，还是高汤的例子。如果高汤师傅A对B说，我等你用完高汤再把锅倒干净洗掉。万一B也在等配菜员C洗完锅，配菜员C又在等高汤师傅A空出灶台，那么这三个人就绑定锁死了，谁也不能离开。此时cordis就用两阶段打烊的策略和无环拓扑的结构来解决这个问题。首先，一旦A准备下班，那么A就会先挂一个“马上下班”的牌子，然后写上现在在用的人，并拒绝新的菜品用这个，等到上面有名字的人都用完了，再把高汤倒掉。其次，食材依赖链条不能有环，也就是说，做鲍鱼先有高汤，那做高汤就不能要求先有鲍鱼。",
+      "translation": "Another interesting problem involves the stock. Suppose stock chef A tells B, ‘I will wait until you finish using the stock before I empty and wash the pot.’ But B may be waiting for prep worker C to finish washing another pot, while C is waiting for A to free the stove. The three are now deadlocked, and none can leave. Cordis addresses this with a two-phase shutdown strategy and an acyclic topology. First, when A prepares to leave, A posts a ‘closing soon’ sign listing everyone currently using the stock and refuses new users. Only after every listed user is finished can the stock be discarded. Second, ingredient dependency chains cannot contain cycles. If abalone requires stock first, then making the stock cannot in turn require abalone first."
+    },
+    {
+      "source": "最后，关于梁子的目的。虽然说在论文很前面的motivation部分用VSC来阐述动机，并且我觉得他提到的VSC的问题并不会困扰用户，但是最后的落脚点是在一个关键词，也就是“self-evolving”上面。也就是说，deepseek harness与其说是给人的一个工具，不妨说是给AI厨师们和老板们规定了一些可以让它们自行发展的规则，他们可以随时并且自行给餐厅新增员工（plugin），作出新的菜品，而不会影响餐厅的正常运营。",
+      "translation": "Finally, what is Liang's goal? Early in the paper, the Motivation section uses VSC to explain the motivation. Although I do not think the VSC issues mentioned there necessarily trouble users, the paper ultimately lands on one keyword: ‘self-evolving.’ DeepSeek Harness is therefore not merely a tool for people; it can instead be understood as a set of rules that allow AI chefs and AI owners to develop on their own. They can independently add new employees (plugins) and create new dishes at any time without disrupting the restaurant's normal operation."
+    },
+    {
+      "source": "DSH目前只有Web端，我猜测或许以后真的人类只需要看着一个看板，把需要的菜写上去，而不用自己去一点一点指导AI应该做什么。",
+      "translation": "DSH currently has only a web version. My guess is that, perhaps in the future, humans will simply look at a board and write down the dishes they want, without having to guide the AI step by step."
+    }
+  ]
+}

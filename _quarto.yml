@@ -1,0 +1,30 @@
+project:
+  type: website
+  output-dir: _site
+  resources:
+    - CNAME
+
+website:
+  title: "Lei's Note"
+  site-url: "https://wulei.org"
+  description: "Notes on AI, runtimes, plugin systems, and research papers"
+  navbar:
+    logo: images/avatar.jpg
+    left:
+      - href: index.qmd
+        text: Posts
+      - href: about.qmd
+        text: About
+
+format:
+  html:
+    lang: en
+    from: markdown-smart
+    theme: simplex
+    css: styles.css
+    include-in-header: immersive-translate.html
+    toc: true
+    toc-title: "Contents"
+
+execute:
+  freeze: auto

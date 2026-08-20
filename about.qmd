@@ -1,0 +1,32 @@
+---
+title: "Wu Lei"
+---
+
+:::: {.profile}
+::: {.profile-image}
+![](images/avatar.jpg){fig-alt="Wu Lei's cat avatar"}
+
+<span class="profile-caption">this is not Lei but his cat</span>
+:::
+
+::: {.profile-details}
+**Email:** leiwu3-at-link-dot-cuhk-dot-edu-dot-cn
+
+**Research Interests**
+
+- Decentralized AI
+- Zero-Knowledge Proofs for LLMs
+- Blockchain Data Structures
+- Consensus Mechanisms
+
+**Academic Experience**
+
+- The Chinese University of Hong Kong, Shenzhen — Undergraduate in Financial Engineering, 2024–2028
+- ITSO Student Dev Team — 2026–Present
+- Research Intern, supervised by [Haihan Duan](https://duanhaihan.github.io/students.html) — May 2026–Present
+
+Lei's Note collects reading notes on AI, runtimes, plugin systems, and research papers.
+
+Complex ideas do not always need complicated explanations. When possible, this site begins with an intuitive analogy and works toward the underlying technical concepts.
+:::
+::::
