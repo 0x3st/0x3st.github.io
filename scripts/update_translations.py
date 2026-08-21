@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
-"""Keep paragraph-level English translations in sync with Quarto posts.
+"""Keep paragraph-level bilingual translations in sync with Quarto posts.
 
-The script scans posts that reference ``translations-en.json`` in their YAML
-front matter. Existing translations are reused by exact source-text match.
-Only a changed title or new/changed paragraphs are sent to an
-OpenAI-compatible API.
+The script detects whether each post is primarily Chinese or English, then
+creates English translations for Chinese originals and Simplified Chinese
+translations for English originals. Existing translations are reused by exact
+source-text match; only changed content is sent to the selected translator.
 """
 
 from __future__ import annotations
@@ -25,8 +25,9 @@ from typing import Iterable
 
 ROOT = Path(__file__).resolve().parents[1]
 POSTS_DIR = ROOT / "posts"
-TRANSLATION_FILENAME = "translations-en.json"
 DEFAULT_DLX_URL = "http://127.0.0.1:1188/translate"
+LANGUAGE_NAMES = {"en": "English", "zh": "Simplified Chinese"}
+DLX_LANGUAGE_CODES = {"en": "EN", "zh": "ZH"}
 
 
 @dataclass
@@ -34,6 +35,8 @@ class Post:
     path: Path
     title: str
     sources: list[str]
+    source_language: str
+    target_language: str
     translation_path: Path
 
 
@@ -97,6 +100,19 @@ def extract_sources(body: str) -> list[str]:
     return sources
 
 
+def detect_source_language(front_matter: str, title: str, sources: list[str]) -> str:
+    override = re.search(
+        r"^translation-source:\s*(en|zh)\s*$", front_matter, re.MULTILINE | re.IGNORECASE
+    )
+    if override:
+        return override.group(1).lower()
+
+    sample = " ".join([title, *sources])
+    cjk_count = len(re.findall(r"[\u3400-\u4dbf\u4e00-\u9fff]", sample))
+    latin_count = len(re.findall(r"[A-Za-z]", sample))
+    return "zh" if cjk_count / max(cjk_count + latin_count, 1) >= 0.2 else "en"
+
+
 def discover_posts() -> list[Post]:
     posts: list[Post] = []
     for path in sorted(POSTS_DIR.rglob("*.qmd")):
@@ -106,7 +122,7 @@ def discover_posts() -> list[Post]:
         except ValueError as error:
             raise SystemExit(f"{path.relative_to(ROOT)}: {error}") from error
 
-        if TRANSLATION_FILENAME not in front_matter:
+        if re.search(r"^translation:\s*false\s*$", front_matter, re.MULTILINE | re.IGNORECASE):
             continue
 
         try:
@@ -114,20 +130,31 @@ def discover_posts() -> list[Post]:
         except ValueError as error:
             raise SystemExit(f"{path.relative_to(ROOT)}: {error}") from error
 
+        sources = extract_sources(body)
+        if not sources:
+            continue
+        source_language = detect_source_language(front_matter, title, sources)
+        target_language = "en" if source_language == "zh" else "zh"
         posts.append(
             Post(
                 path=path,
                 title=title,
-                sources=extract_sources(body),
-                translation_path=path.parent / TRANSLATION_FILENAME,
+                sources=sources,
+                source_language=source_language,
+                target_language=target_language,
+                translation_path=path.parent / f"translations-{target_language}.json",
             )
         )
     return posts
 
 
-def read_payload(path: Path) -> dict:
+def read_payload(path: Path, target_language: str) -> dict:
     if not path.exists():
-        return {"language": "en", "label": "AI-assisted English translation", "items": []}
+        return {
+            "language": target_language,
+            "label": f"{LANGUAGE_NAMES[target_language]} translation",
+            "items": [],
+        }
     try:
         return json.loads(path.read_text(encoding="utf-8"))
     except (json.JSONDecodeError, OSError) as error:
@@ -182,13 +209,19 @@ def dlx_available(url: str) -> bool:
         return False
 
 
-def request_dlx_translations(texts: list[str], url: str) -> list[str]:
+def request_dlx_translations(
+    texts: list[str], url: str, source_language: str, target_language: str
+) -> list[str]:
     results: list[str] = []
     for index, text in enumerate(texts, start=1):
         request = urllib.request.Request(
             url,
             data=json.dumps(
-                {"text": text, "source_lang": "ZH", "target_lang": "EN"},
+                {
+                    "text": text,
+                    "source_lang": DLX_LANGUAGE_CODES[source_language],
+                    "target_lang": DLX_LANGUAGE_CODES[target_language],
+                },
                 ensure_ascii=False,
             ).encode("utf-8"),
             headers={"Content-Type": "application/json"},
@@ -210,13 +243,19 @@ def request_dlx_translations(texts: list[str], url: str) -> list[str]:
     return results
 
 
-def request_api_translations(texts: list[str], settings: tuple[str, str, str]) -> list[str]:
+def request_api_translations(
+    texts: list[str],
+    settings: tuple[str, str, str],
+    source_language: str,
+    target_language: str,
+) -> list[str]:
     key, base, model = settings
     results: list[str] = []
 
     for batch in chunks(texts):
         prompt = {
-            "target_language": "English",
+            "source_language": LANGUAGE_NAMES[source_language],
+            "target_language": LANGUAGE_NAMES[target_language],
             "texts": batch,
             "requirements": [
                 "Translate each item accurately and naturally for an academic technical blog.",
@@ -268,7 +307,10 @@ def request_api_translations(texts: list[str], settings: tuple[str, str, str]) -
 
 
 def generate_translations(
-    texts: list[str], api: tuple[str, str, str] | None
+    texts: list[str],
+    api: tuple[str, str, str] | None,
+    source_language: str,
+    target_language: str,
 ) -> list[str]:
     provider = os.getenv("TRANSLATION_PROVIDER", "auto").lower()
     if provider not in {"auto", "dlx", "api"}:
@@ -277,14 +319,14 @@ def generate_translations(
     local_url = dlx_url()
     if provider != "api" and dlx_available(local_url):
         print(f"Using local DLX: {local_url}")
-        return request_dlx_translations(texts, local_url)
+        return request_dlx_translations(texts, local_url, source_language, target_language)
     if provider == "dlx":
         raise SystemExit(f"Local DLX is not reachable at {local_url}")
 
     if api is not None:
         _, base, model = api
         print(f"Using translation API: {base} ({model})")
-        return request_api_translations(texts, api)
+        return request_api_translations(texts, api, source_language, target_language)
 
     raise SystemExit(
         f"Translations are stale and local DLX is not reachable at {local_url}. "
@@ -302,34 +344,69 @@ def write_payload(path: Path, payload: dict) -> None:
 
 
 def sync_post(post: Post, *, check: bool, force: bool, settings: tuple[str, str, str] | None) -> bool:
-    payload = read_payload(post.translation_path)
+    payload = read_payload(post.translation_path, post.target_language)
+    obsolete_target = "zh" if post.target_language == "en" else "en"
+    obsolete_path = post.path.parent / f"translations-{obsolete_target}.json"
+    obsolete_exists = obsolete_path.exists()
     existing = {
         normalize(item.get("source", "")): item.get("translation", "")
         for item in payload.get("items", [])
         if item.get("source") and item.get("translation")
     }
 
-    title_changed = force or payload.get("titleSource") != post.title or not payload.get("titleTranslation")
-    missing_sources = post.sources if force else [source for source in post.sources if source not in existing]
+    language_changed = (
+        payload.get("language") != post.target_language
+        or payload.get("sourceLanguage") not in {None, post.source_language}
+    )
+    regenerate = force or language_changed
+    metadata_changed = payload.get("sourceLanguage") != post.source_language
+    title_changed = (
+        regenerate
+        or payload.get("titleSource") != post.title
+        or not payload.get("titleTranslation")
+    )
+    missing_sources = (
+        post.sources
+        if regenerate
+        else [source for source in post.sources if source not in existing]
+    )
     stale_sources = set(existing) - set(post.sources)
-    changed = title_changed or bool(missing_sources) or bool(stale_sources)
+    changed = (
+        metadata_changed
+        or title_changed
+        or bool(missing_sources)
+        or bool(stale_sources)
+        or obsolete_exists
+    )
     relative = post.path.relative_to(ROOT)
 
     if not changed:
-        print(f"Translations up to date: {relative}")
+        print(
+            f"Translations up to date: {relative} "
+            f"({post.source_language} → {post.target_language})"
+        )
         return False
 
     print(
         f"Translation changes: {relative} "
-        f"(title={int(title_changed)}, new={len(missing_sources)}, stale={len(stale_sources)})"
+        f"({post.source_language} → {post.target_language}, title={int(title_changed)}, "
+        f"new={len(missing_sources)}, stale={len(stale_sources)}, "
+        f"obsolete={int(obsolete_exists)})"
     )
     if check:
         return True
+
     requested: list[str] = []
     if title_changed:
         requested.append(post.title)
     requested.extend(missing_sources)
-    generated = iter(generate_translations(requested, settings))
+    generated = iter(
+        generate_translations(
+            requested, settings, post.source_language, post.target_language
+        )
+        if requested
+        else []
+    )
 
     title_translation = next(generated) if title_changed else payload["titleTranslation"]
     replacements = {source: next(generated) for source in missing_sources}
@@ -342,13 +419,17 @@ def sync_post(post: Post, *, check: bool, force: bool, settings: tuple[str, str,
     ]
 
     updated = {
-        "language": "en",
-        "label": payload.get("label", "AI-assisted English translation"),
+        "sourceLanguage": post.source_language,
+        "language": post.target_language,
+        "label": f"{LANGUAGE_NAMES[post.target_language]} translation",
         "titleSource": post.title,
         "titleTranslation": title_translation,
         "items": items,
     }
     write_payload(post.translation_path, updated)
+    if obsolete_exists:
+        obsolete_path.unlink()
+        print(f"Removed: {obsolete_path.relative_to(ROOT)}")
     print(f"Updated: {post.translation_path.relative_to(ROOT)}")
     return True
 

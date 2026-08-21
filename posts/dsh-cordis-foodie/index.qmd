@@ -3,7 +3,6 @@ title: "用吃货能听懂的方式讲DSH的论文"
 date: 2026-08-21
 categories: [paper, deepseek harness]
 image: cover.jpeg
-resources: [translations-en.json]
 ---
 
 七夕节没事干，于是把cordis的那个论文找出来大致看了一眼，忽然就明白为啥dsh这么强调plugin了，也大概能猜到dsh接下来要做啥了。
