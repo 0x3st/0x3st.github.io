@@ -2,5 +2,7 @@
 /.quarto/
 /_freeze/
 .DS_Store
+__pycache__/
+*.pyc
 
 **/*.quarto_ipynb

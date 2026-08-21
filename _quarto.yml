@@ -3,11 +3,13 @@ project:
   output-dir: _site
   resources:
     - CNAME
+  pre-render:
+    - scripts/update_translations.py
 
 website:
   title: "Lei's Note"
   site-url: "https://wulei.org"
-  description: "Notes on AI, runtimes, plugin systems, and research papers"
+  description: "Notes on research papers"
   navbar:
     logo: images/avatar.jpg
     left:
