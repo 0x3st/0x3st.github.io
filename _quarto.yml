@@ -23,7 +23,9 @@ format:
   html:
     lang: en
     from: markdown-smart
-    theme: simplex
+    theme:
+      light: simplex
+      dark: darkly
     css: styles.css
     include-in-header: immersive-translate.html
     toc: true
