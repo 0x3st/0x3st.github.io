@@ -15,6 +15,9 @@ website:
         text: Posts
       - href: about.qmd
         text: About
+  page-footer:
+    left: "© 2026 Wu Lei. All rights reserved."
+    right: "Made by Human"
 
 format:
   html:
