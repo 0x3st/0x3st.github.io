@@ -13,10 +13,12 @@ import argparse
 import json
 import os
 import re
+import socket
 import sys
 import tempfile
 import urllib.error
 import urllib.request
+from urllib.parse import urlparse
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Iterable
@@ -24,6 +26,7 @@ from typing import Iterable
 ROOT = Path(__file__).resolve().parents[1]
 POSTS_DIR = ROOT / "posts"
 TRANSLATION_FILENAME = "translations-en.json"
+DEFAULT_DLX_URL = "http://127.0.0.1:1188/translate"
 
 
 @dataclass
@@ -164,7 +167,50 @@ def chunks(texts: list[str], max_items: int = 8, max_chars: int = 6000) -> Itera
         yield chunk
 
 
-def request_translations(texts: list[str], settings: tuple[str, str, str]) -> list[str]:
+def dlx_url() -> str:
+    return os.getenv("DLX_URL", os.getenv("DEEPLX_URL", DEFAULT_DLX_URL))
+
+
+def dlx_available(url: str) -> bool:
+    parsed = urlparse(url)
+    host = parsed.hostname or "127.0.0.1"
+    port = parsed.port or (443 if parsed.scheme == "https" else 80)
+    try:
+        with socket.create_connection((host, port), timeout=0.5):
+            return True
+    except OSError:
+        return False
+
+
+def request_dlx_translations(texts: list[str], url: str) -> list[str]:
+    results: list[str] = []
+    for index, text in enumerate(texts, start=1):
+        request = urllib.request.Request(
+            url,
+            data=json.dumps(
+                {"text": text, "source_lang": "ZH", "target_lang": "EN"},
+                ensure_ascii=False,
+            ).encode("utf-8"),
+            headers={"Content-Type": "application/json"},
+            method="POST",
+        )
+        try:
+            with urllib.request.urlopen(request, timeout=90) as response:
+                payload = json.loads(response.read().decode("utf-8"))
+        except urllib.error.HTTPError as error:
+            detail = error.read().decode("utf-8", "replace")[:1000]
+            raise SystemExit(f"DLX returned HTTP {error.code}: {detail}") from error
+        except (urllib.error.URLError, TimeoutError, json.JSONDecodeError) as error:
+            raise SystemExit(f"DLX request failed: {error}") from error
+
+        translated = payload.get("data")
+        if payload.get("code", 200) != 200 or not isinstance(translated, str) or not translated.strip():
+            raise SystemExit(f"DLX returned an unexpected response for item {index}")
+        results.append(translated.strip())
+    return results
+
+
+def request_api_translations(texts: list[str], settings: tuple[str, str, str]) -> list[str]:
     key, base, model = settings
     results: list[str] = []
 
@@ -221,6 +267,31 @@ def request_translations(texts: list[str], settings: tuple[str, str, str]) -> li
     return results
 
 
+def generate_translations(
+    texts: list[str], api: tuple[str, str, str] | None
+) -> list[str]:
+    provider = os.getenv("TRANSLATION_PROVIDER", "auto").lower()
+    if provider not in {"auto", "dlx", "api"}:
+        raise SystemExit("TRANSLATION_PROVIDER must be one of: auto, dlx, api")
+
+    local_url = dlx_url()
+    if provider != "api" and dlx_available(local_url):
+        print(f"Using local DLX: {local_url}")
+        return request_dlx_translations(texts, local_url)
+    if provider == "dlx":
+        raise SystemExit(f"Local DLX is not reachable at {local_url}")
+
+    if api is not None:
+        _, base, model = api
+        print(f"Using translation API: {base} ({model})")
+        return request_api_translations(texts, api)
+
+    raise SystemExit(
+        f"Translations are stale and local DLX is not reachable at {local_url}. "
+        "Start DLX, or set DEEPSEEK_API_KEY, OPENAI_API_KEY, or TRANSLATION_API_KEY."
+    )
+
+
 def write_payload(path: Path, payload: dict) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     content = json.dumps(payload, ensure_ascii=False, indent=2) + "\n"
@@ -254,17 +325,11 @@ def sync_post(post: Post, *, check: bool, force: bool, settings: tuple[str, str,
     )
     if check:
         return True
-    if settings is None:
-        raise SystemExit(
-            "Translations are stale, but no API key is configured. Set DEEPSEEK_API_KEY, "
-            "OPENAI_API_KEY, or TRANSLATION_API_KEY before rendering."
-        )
-
     requested: list[str] = []
     if title_changed:
         requested.append(post.title)
     requested.extend(missing_sources)
-    generated = iter(request_translations(requested, settings))
+    generated = iter(generate_translations(requested, settings))
 
     title_translation = next(generated) if title_changed else payload["titleTranslation"]
     replacements = {source: next(generated) for source in missing_sources}
