@@ -36,7 +36,7 @@ quarto render
 scripts/publish_with_dlx.sh
 ```
 
-该命令需要本机安装 `deeplx` 可执行文件或 Docker。如果译文没有变化，则不会启动 DLX。
+该命令需要本机安装 `deeplx` 可执行文件或 Docker。如果译文没有变化，则不会启动 DLX。需要代理时可设置 `DLX_PROXY`（例如 `http://127.0.0.1:7890`）；临时服务只绑定到 `127.0.0.1`，不会暴露到局域网。
 
 ### API 回退
 

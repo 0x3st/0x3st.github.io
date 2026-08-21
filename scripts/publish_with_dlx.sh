@@ -33,7 +33,11 @@ fi
 if ! reachable; then
   if command -v deeplx >/dev/null 2>&1; then
     echo "Starting temporary local DLX binary..."
-    deeplx >/tmp/leis-note-dlx.log 2>&1 &
+    DLX_ARGS=(-i 127.0.0.1 -p 1188)
+    if [[ -n "${DLX_PROXY:-}" ]]; then
+      DLX_ARGS+=(-proxy "$DLX_PROXY")
+    fi
+    deeplx "${DLX_ARGS[@]}" >/tmp/leis-note-dlx.log 2>&1 &
     DLX_PID=$!
     STARTED_BY_SCRIPT=1
   elif command -v docker >/dev/null 2>&1; then
