@@ -111,6 +111,7 @@ ul.task-list li input[type="checkbox"] {
 <script>
 document.addEventListener("DOMContentLoaded", async function () {
   const normalize = (text) => text.replace(/\s+/g, " ").trim();
+  const translationFiles = ["translations-en.json", "translations-zh.json"];
 
   async function loadPayload(url) {
     try {
@@ -123,10 +124,18 @@ document.addEventListener("DOMContentLoaded", async function () {
     }
   }
 
-  function translationBlock(text, extraClass) {
+  async function loadArticlePayload(articleUrl) {
+    for (const filename of translationFiles) {
+      const payload = await loadPayload(new URL(filename, articleUrl));
+      if (payload?.items && payload?.language) return payload;
+    }
+    return null;
+  }
+
+  function translationBlock(text, language, extraClass) {
     const translated = document.createElement("div");
     translated.className = "immersive-translation" + (extraClass ? " " + extraClass : "");
-    translated.lang = "en";
+    translated.lang = language;
     translated.textContent = text;
     return translated;
   }
@@ -147,7 +156,7 @@ document.addEventListener("DOMContentLoaded", async function () {
     const button = document.createElement("button");
     button.type = "button";
     button.className = "nav-link immersive-toggle";
-    button.setAttribute("aria-label", "Toggle paragraph-by-paragraph English translation");
+    button.setAttribute("aria-label", "Toggle paragraph-by-paragraph translation");
     item.appendChild(button);
     rightNav.appendChild(item);
 
@@ -170,17 +179,17 @@ document.addEventListener("DOMContentLoaded", async function () {
   }
 
   async function translateArticle() {
-    const articlePath = /\/posts\/dsh-cordis-foodie\/(?:index\.html)?$/;
-    if (!articlePath.test(window.location.pathname)) return 0;
+    if (!window.location.pathname.includes("/posts/")) return 0;
 
-    const payload = await loadPayload(new URL("translations-en.json", window.location.href));
+    const payload = await loadArticlePayload(window.location.href);
     if (!payload) return 0;
 
     const translations = new Map(
       payload.items.map((item) => [normalize(item.source), item.translation])
     );
     const blocks = document.querySelectorAll(
-      "main.content > p, main.content > ol > li, main.content > blockquote > p"
+      "main.content > p, main.content > ol > li, main.content > ul > li, " +
+      "main.content > blockquote > p"
     );
 
     let count = 0;
@@ -188,16 +197,24 @@ document.addEventListener("DOMContentLoaded", async function () {
     if (articleTitle && payload.titleTranslation) {
       articleTitle.insertAdjacentElement(
         "afterend",
-        translationBlock(payload.titleTranslation, "article-title-translation")
+        translationBlock(
+          payload.titleTranslation,
+          payload.language,
+          "article-title-translation"
+        )
       );
       count += 1;
     }
 
     blocks.forEach(function (block) {
-      const english = translations.get(normalize(block.textContent));
-      if (!english) return;
+      const translation = translations.get(normalize(block.textContent));
+      if (!translation) return;
 
-      const translated = translationBlock(english, "article-translation");
+      const translated = translationBlock(
+        translation,
+        payload.language,
+        "article-translation"
+      );
       if (block.tagName === "LI") {
         block.appendChild(translated);
       } else {
@@ -209,37 +226,47 @@ document.addEventListener("DOMContentLoaded", async function () {
   }
 
   async function translateListing() {
-    const titleLink = document.querySelector(
-      '.listing-title a[href*="posts/dsh-cordis-foodie/"]'
+    const titleLinks = Array.from(
+      document.querySelectorAll('.listing-title a[href*="posts/"]')
     );
-    if (!titleLink) return 0;
-
-    const articleUrl = new URL(titleLink.getAttribute("href"), window.location.href);
-    const payload = await loadPayload(new URL("translations-en.json", articleUrl));
-    if (!payload) return 0;
-
     let count = 0;
-    const title = titleLink.closest(".listing-title");
-    if (title && payload.titleTranslation) {
-      title.insertAdjacentElement(
-        "afterend",
-        translationBlock(payload.titleTranslation, "listing-title-translation")
-      );
-      count += 1;
-    }
 
-    const description = titleLink.closest(".quarto-post")?.querySelector(".listing-description");
-    if (description && payload.items?.[0]?.translation) {
-      description.insertAdjacentElement(
-        "afterend",
-        translationBlock(payload.items[0].translation, "listing-description-translation")
-      );
-      count += 1;
-    }
+    await Promise.all(titleLinks.map(async function (titleLink) {
+      const articleUrl = new URL(titleLink.getAttribute("href"), window.location.href);
+      const payload = await loadArticlePayload(articleUrl);
+      if (!payload) return;
+
+      const title = titleLink.closest(".listing-title");
+      if (title && payload.titleTranslation) {
+        title.insertAdjacentElement(
+          "afterend",
+          translationBlock(
+            payload.titleTranslation,
+            payload.language,
+            "listing-title-translation"
+          )
+        );
+        count += 1;
+      }
+
+      const description = titleLink.closest(".quarto-post")?.querySelector(".listing-description");
+      if (description && payload.items?.[0]?.translation) {
+        description.insertAdjacentElement(
+          "afterend",
+          translationBlock(
+            payload.items[0].translation,
+            payload.language,
+            "listing-description-translation"
+          )
+        );
+        count += 1;
+      }
+    }));
     return count;
   }
 
-  const translatedCount = (await translateArticle()) || (await translateListing());
+  const articleCount = await translateArticle();
+  const translatedCount = articleCount || await translateListing();
   if (translatedCount) addToggle();
 });
 </script>
@@ -512,7 +539,7 @@ window.Quarto = {
 
 <div class="quarto-listing quarto-listing-container-default" id="listing-listing">
 <div class="list quarto-listing-default">
-<div class="quarto-post image-right" data-index="0" data-categories="cGFwZXIlMkNkZWVwc2VlayUyMGhhcm5lc3M=" data-listing-date-sort="1787241600000" data-listing-file-modified-sort="1787331371326" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="1" data-listing-word-count-sort="23">
+<div class="quarto-post image-right" data-index="0" data-categories="cGFwZXIlMkNkZWVwc2VlayUyMGhhcm5lc3M=" data-listing-date-sort="1787241600000" data-listing-file-modified-sort="1787340372172" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="1" data-listing-word-count-sort="23">
 <div class="thumbnail"><a href="./posts/dsh-cordis-foodie/index.html" class="no-external">
 
 <img loading="lazy" src="./posts/dsh-cordis-foodie/cover.jpeg" class="thumbnail-image">

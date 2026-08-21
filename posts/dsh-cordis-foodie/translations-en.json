@@ -1,6 +1,7 @@
 {
+  "sourceLanguage": "zh",
   "language": "en",
-  "label": "AI-assisted English translation",
+  "label": "English translation",
   "titleSource": "用吃货能听懂的方式讲DSH的论文",
   "titleTranslation": "Explaining the DSH Paper in Terms a Foodie Can Understand",
   "items": [
